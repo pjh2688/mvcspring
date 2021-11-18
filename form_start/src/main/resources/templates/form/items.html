@@ -1,0 +1,64 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <!-- 1. css의 절대경로도 추가해준다. -->
+    <link th:href="@{/assets/css/bootstrap.min.css}"
+    		href="../assets/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+
+<div class="container" style="max-width: 600px">
+    <div class="py-5 text-center">
+        <h2>상품 목록</h2>
+    </div>
+    
+    <!-- 3. th:text에다가 값 넣으면 내 소스에서는 에러 발생. -->
+    <h2 th:if="${param.status}">저장 완료</h2>
+   
+    <div class="row">
+        <div class="col">
+        	<!-- 2. || 리터럴 대체 문법 -> 문자 안깨지게 해주는 타임리프 문법 ,  @{} 문법 -> URL 링크 걸때 사용하는 타임리프 문법   
+        		*리터럴 대체 문법에 대한 추가 설명
+        		 - 타임리프에서는 문자와 표현식 등은 분리되어 있기 때문에 더해서 사용해야 한다.
+        		  ex) <span th:text="'Welcome to our application, ' + ${user.name} + '!'"> 	
+        		 - 리터럴 대체 문법 적용하면 -> 한번에 쓸 수 있다.
+        		  ex) <span th:text="|Welcome to our application, ${user.name} !|"> 	
+        		 - 리터럴 문법을 사용 안하면 이런식으로 써야 한다.
+        		  ex) th:onclick="'location.href=\''+ @{/basic/items/add} + '\''">
+        	-->  
+            <button class="btn btn-primary float-end"
+                    onclick="location.href='addForm.html'"              
+                    th:onclick="|location.href='@{/form/items/add}'|"
+                    type="button">상품 등록</button>
+        </div>
+    </div>
+
+    <hr class="my-4">
+    <div>
+        <table class="table">
+            <thead>
+            <tr>
+                <th>ID</th>
+                <th>상품명</th>
+                <th>가격</th>
+                <th>수량</th>
+            </tr>
+            </thead>
+            <tbody>
+            <!-- 3. th:each -> jsp의 foreach 같은 기능 : 모델에서 싣고 온 items의 데이터를 차례대로 꺼내온다. -->
+            <tr th:each="item : ${items}" th:onclick="'location.href=\''+ @{|/form/items/${item.id}|} + '\''">
+            	<!-- 4. th:text 데이터 가져와 뿌려주는 타임리프 문법, 참고 : {itemId}(itemId=${item.id}) => ${item.id}에서 받은 데이터를 itemId라는 곳에 저장한 뒤 {itemId}에 렌더링  -->
+                <td><a href="item.html" th:href="@{/form/items/{itemId}(itemId=${item.id})}" th:text="${item.id}">회원id</a></td>
+                <td><a href="item.html" th:href="@{|/form/items/${item.id}|}" th:text="${item.itemName}">상품명</a></td>
+                <td th:text="${item.price}">가격</td>
+                <td th:text="${item.quantity}">수량</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+</div> <!-- /container -->
+
+</body>
+</html>
