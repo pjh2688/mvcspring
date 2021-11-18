@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  
+<mapper namespace="com.itemservice.repository.item.IItemMapper">
+	
+	<select id="findAll" resultType="com.itemservice.domain.item.Item">
+		select 
+			item_id as id,
+			item_name as itemName,
+			item_price as price,
+			item_quantity as quantity,
+			item_open as open,
+			regions,
+			itemType,
+			deliveryCode
+		from item
+	</select>
+	
+	<select id="findById" resultType="com.itemservice.domain.item.Item">
+		select
+			item_id as id,
+			item_name as itemName,
+			item_price as price,
+			item_quantity as quantity,
+			item_open as open,
+			regions,
+			itemType,
+			deliveryCode
+		from item where item_id = #{id}
+	</select>
+	
+	<select id="findByItem" resultType="com.itemservice.domain.item.ItemDto">
+		select
+			item_id as id,
+			item_name as itemName,
+			item_price as price,
+			item_quantity as quantity,
+			item_open as open,
+			regions,
+			itemType,
+			deliveryCode
+		from item where item_id = #{id}
+	</select>
+	
+	<insert id="save" parameterType="com.itemservice.domain.item.Item">
+		insert into item(item_name, item_price, item_quantity, item_open, regions, itemType, deliveryCode)
+			values(
+				#{itemName}, 
+				#{price}, 
+				#{quantity}, 
+				#{open},
+				concat_ws(',', <foreach collection="regions" item="region" separator=",">#{region}</foreach>),
+				#{itemType},
+				#{deliveryCode}
+			)
+
+ 	</insert>
+	
+	<update id="update" parameterType="com.itemservice.domain.item.Item">
+		update item
+			set 
+				item_name = #{itemName}, 
+				item_price = #{price}, 
+				item_quantity = #{quantity}, 
+				item_open = #{open},
+				regions = concat_ws(',', <foreach collection="regions" item="region" separator=",">#{region}</foreach>),
+				itemType = #{itemType},
+				deliveryCode = #{deliveryCode}
+			where item_id = #{id}
+	</update>
+	
+	<delete id="delete">
+		delete from item
+			where item_id = #{id}
+	</delete>
+	
+</mapper>
+
+<!-- 
+	가상 번호로 보여주는 로우넘 쿼리 다음에(2021-10-31)
+	SELECT 
+			@rownum:=@rownum+1 as iNo,
+			item_id as id,
+			item_name as itemName ,
+			item_price as price,
+			item_quantity as quantity
+		from item, (select @rownum := 0) rownum
+ -->
