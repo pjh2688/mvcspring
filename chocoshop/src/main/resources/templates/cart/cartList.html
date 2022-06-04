@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	  layout:decorate="layouts/layout1">
+	  
+	<head>
+		<meta name="_csrf" th:content="${_csrf.token}" />
+		<meta name="_csrf_header" th:content="${_csrf.headerName}"/>
+	</head>
+	
+	
+	<!-- 사용자 CSS 추가 -->  
+	<th:block layout:fragment="css">
+		<style>
+			.content-mg {
+				margin-left: 25%;
+				margin-right: 25%;
+				margin-top: 2%;
+				margin-bottom: 100px;
+			}
+			
+			.mt-2 {
+				margin-top: 2px;
+			}
+			
+			.mt-3 {
+				margin-top: 3px;
+			}
+			
+			.mb-4 {
+				margin-bottom: 4px;
+			}
+			
+			.mr-2 {
+				margin-right: 2px;
+			}
+			
+			.d-flex {
+				display: flex;
+				
+			}
+			
+			.rounded {
+				border-radius: 50%;
+			}
+			
+			.repImgDiv {
+				margin-right: 15px;
+				margin-left: 15px;
+				height: auto;;
+			}
+			
+			.repImg {
+				height: 100px;
+				width: 100px;
+			}
+			
+			.font-weight-bold {
+				font-weight: bold;
+			}
+			.font-weight-lighter {
+				font-weight: lighter;
+			}
+			
+			.fs18 {
+				font-size: 18px;
+			}
+			
+			.fs24 {
+				font-size: 24px;
+			}
+			
+			.align-self-center {
+				margin: 0 auto;
+			}
+			
+			.totalprice {
+				flex-direction: column;
+			}
+			
+			#checkall {
+				margin-right: 6px;
+			}
+			
+		</style>
+	</th:block>  
+	
+	<!-- 사용자 스크립트 추가 -->  
+	<th:block layout:fragment="script">
+		<script th:inline="javascript">
+			
+		// 1-1. 장바구니 상품금액 계산 로직
+		$(document).ready(function() {
+			$("input[name=cartChkBox]").change(function() {
+				getOrderTotalPrice();
+			});
+		});
+		
+		// 1-2. 장바구니 상품금액 계산 로직
+		function getOrderTotalPrice() {
+			var orderTotalPrice = 0;
+			
+			$("input[name=cartChkBox]:checked").each(function() {
+				var cartItemId = $(this).val();
+				var price = $("#price_" + cartItemId).attr("data-price");
+				var count = $("#count_" + cartItemId).val();
+				
+				orderTotalPrice += price * count;
+			});
+			
+			$("#orderTotalPrice").html(orderTotalPrice + '원');
+			
+		}
+		
+		// 1-3. 장바구니 상품금액 계산 로직
+		function changeCount(obj) {
+			var count = obj.value;		
+			var cartItemId = obj.id.split('_')[1];
+			var price = $("#price_" + cartItemId).data("price");
+			
+			var totalPrice = count * price;
+			$("#totalPrice_" + cartItemId).html(totalPrice + "원");
+			
+			getOrderTotalPrice();
+			updateCartItemCount(cartItemId, count);
+	
+		}
+	
+		// 1-4. 체크된 상품으로 총 주문 금액 계산 로직
+		function checkAll() {
+			if($("#checkall").prop("checked")) {
+				$("input[name=cartChkBox]").prop("checked", true);
+			} else {
+				$("input[name=cartChkBox]").prop("checked", false);
+			}
+			
+			getOrderTotalPrice();
+		}		
+		
+		// 1-5. 상품 수량 변경시 실시간 DB 업데이트 메소드(변경 감지)
+		function updateCartItemCount(cartItemId, count) {
+			// 1-6. 스프링 시큐리티를 사용할 경우 기본적으로 POST 방식의 데이터 전송에는 CSRF[Cross Site Request Forgery, 사이트 간 요청 위조]토큰 값이 필요하므로 해당 값들을 조회한다.
+			var token = $("meta[name='_csrf']").attr("content");
+			var header = $("meta[name='_csrf_header']").attr("content");
+			
+			// 1-7. 두개의 매개변수로 api로 보낼 url 만들기
+			var url = "/cartItem/" + cartItemId + "?count=" + count;
+			
+			$.ajax({
+				url: url,
+				type: "PATCH",
+				beforeSend: function(xhr) {
+					// 3-4. 데이터를 전송하기 전에 헤더에 csrf 값을 설정
+					xhr.setRequestHeader(header, token);
+				},
+				dataType: "json",  // 3-5. 서버에서 결과값으로 받을 데이터의 타입.
+				cache: false,
+				success: function(result, status) {
+					console.log("cartItem count update success");
+				},
+				error: function(jqXHR, status, error) {
+					
+					if(jqXHR.status == '401') {
+						alert('로그인 후 이용해주세요.');
+						location.href = '/members/login';
+					} else {
+						alert(jqXHR.responseText);
+					}
+				}
+			});
+			
+		}
+		
+		// 2-1. 장바구니 아이템 삭제 메소드
+		function deleteCartItem(cartItemId) {
+			// 2-2. 스프링 시큐리티를 사용할 경우 기본적으로 POST 방식의 데이터 전송에는 CSRF[Cross Site Request Forgery, 사이트 간 요청 위조]토큰 값이 필요하므로 해당 값들을 조회한다.
+			var token = $("meta[name='_csrf']").attr("content");
+			var header = $("meta[name='_csrf_header']").attr("content");
+			
+			// 2-3. 
+			var url = "/cartItem/" + cartItemId;
+			
+			$.ajax({
+				url: url,
+				type: "DELETE",
+				beforeSend: function(xhr) {
+					// 2-4. 데이터를 전송하기 전에 헤더에 csrf 값을 설정
+					xhr.setRequestHeader(header, token);
+				},
+				dataType: "json",  // 2-5. 서버에서 결과값으로 받을 데이터의 타입.
+				cache: false,
+				success: function(result, status) {
+					location.href = '/cart';
+				},
+				error: function(jqXHR, status, error) {
+					
+					if(jqXHR.status == '401') {
+						alert('로그인 후 이용해주세요.');
+						location.href = '/members/login';
+					} else {
+						alert(jqXHR.responseText);
+					}
+				}
+			});
+		}
+		
+		// 3-1. 장바구니에서 선택(체크)한 상품 주문
+		function orders() {
+			// 3-2. 스프링 시큐리티를 사용할 경우 기본적으로 POST 방식의 데이터 전송에는 CSRF[Cross Site Request Forgery, 사이트 간 요청 위조]토큰 값이 필요하므로 해당 값들을 조회한다.
+			var token = $("meta[name='_csrf']").attr("content");
+			var header = $("meta[name='_csrf_header']").attr("content");
+			
+			// 3-3. 
+			var url = "/cart/orders";
+			
+			// 3-4.
+			var dataList = new Array();
+			
+			// 3-5. 
+			var paramData = new Object();
+			
+			// 3-6.
+			$("input[name=cartChkBox]:checked").each(function() {
+				var cartItemId = $(this).val();
+				var data = new Object();
+				data["cartItemId"] = cartItemId;
+				dataList.push(data);
+			});
+			
+			// 3-7.
+			paramData['cartOrderDtoList'] = dataList;
+			
+			// 3-8.
+			var param = JSON.stringify(paramData);
+			
+			// 3-9.
+			$.ajax({
+				url: url,
+				type: "POST",
+				contentType: "application/json",
+				data: param,
+				beforeSend: function(xhr) {
+					// 3-4. 데이터를 전송하기 전에 헤더에 csrf 값을 설정
+					xhr.setRequestHeader(header, token);
+				},
+				dataType: "json",  // 3-5. 서버에서 결과값으로 받을 데이터의 타입.
+				cache: false,
+				success: function(result, status) {
+					alert("주문이 완료되었습니다.");
+					location.href = '/orders';
+				},
+				error: function(jqXHR, status, error) {
+					
+					if(jqXHR.status == '401') {
+						alert('로그인 후 이용해주세요.');
+						location.href = '/members/login';
+					} else {
+						alert(jqXHR.responseText);
+					}
+				}
+			});
+		}
+		
+		</script>
+	</th:block>
+	
+	<div layout:fragment="content" class="content-mg">
+	
+		<h2 class="mb-4">장바구니 목록</h2>
+		
+		<div>
+			
+			<table class="table">
+				<colgroup>
+					<col width="15%"/>
+					<col width="70%"/>
+					<col width="15%"/>
+				</colgroup>
+				<thead>
+					<tr class="text-center">
+						<td><input type="checkbox" id="checkall" onclick="checkAll();">전체선택</td>
+						<td>상품정보</td>
+						<td>상품금액</td>
+					</tr>
+				</thead>
+				<tbody>
+					<tr th:each="cartItem : ${cartItems}">
+						<td class="text-center align-middle">
+							<input type="checkbox" name="cartChkBox" th:value="${cartItem.cartItemId}">
+						</td>
+						<td class="d-flex">
+							<div class="repImgDiv align-self-center">
+								<img th:src="${cartItem.imgUrl}" class="rounded repImg" th:alt="${cartItem.itemNm}">
+							</div>
+							<div class="align-self-center">
+								<span th:text="${cartItem.itemNm}" class="fs24 font-weight-bold"></span>
+								<div class="fs18 font-weight-lighter">
+									<span class="input-group mt-2">
+										<span th:id="'price_' + ${cartItem.cartItemId}"
+											  th:data-price="${cartItem.price}"
+											  th:text="${cartItem.price} + '원'"
+											  class="align-self-center mr-2">
+										</span>
+										<input type="number" name="count" class="form-control mr-2" 
+											   th:id="'count_' + ${cartItem.cartItemId}" 
+											   th:value="${cartItem.count}"
+											   min="1"
+											   onchange="changeCount(this);">
+											   
+										<button type="button" class="close" aria-label="Close">
+											<span aria-hidden="true" th:data-id="${cartItem.cartItemId}" th:onclick="'deleteCartItem(' + ${cartItem.cartItemId} + ');'">&times;</span>
+										</button>
+									</span>	
+								</div>
+							</div>
+						</td>
+						<td class="text-center align-middle">
+							<span th:id="'totalPrice_' + ${cartItem.cartItemId}" th:name="tatalPrice" th:text="${cartItem.price * cartItem.count} + '원'"></span>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+			
+			<h2 class="text-center">
+				총 주문 금액 : <span id="orderTotalPrice" class="text-danger">0원</span>
+			</h2>
+			
+			<div class="text-center mt-3">
+				<button type="button" class="btn btn-primary btn-lg" th:onclick="orders();">주문하기</button>
+			</div>
+			
+		</div>
+		
+	</div>
+</html>

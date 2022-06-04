@@ -1,0 +1,112 @@
+/* 10-1. querydsl version 정보 추가 */
+buildscript {
+	ext {
+		queryDslVersion = "5.0.0";
+	}
+}
+
+plugins {
+	id 'org.springframework.boot' version '2.6.7'
+	id 'io.spring.dependency-management' version '1.0.11.RELEASE'
+	id 'java'
+	id 'war'
+
+	/* 10-2. querydsl plugin 추가 */
+	id "com.ewerk.gradle.plugins.querydsl" version "1.0.10"
+}
+
+group = 'com.shop'
+version = '0.0.1-SNAPSHOT'
+sourceCompatibility = '1.8'
+
+/* 10-3. querydsl(?) */
+configurations {
+	compileOnly {
+		extendsFrom annotationProcessor
+	}
+}
+
+repositories {
+	mavenCentral()
+}
+
+dependencies {
+	/* 1. web */
+	implementation 'org.springframework.boot:spring-boot-starter-web'
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	
+	/* 2. 배포시 내장톰캣을 사용하지 않을거라는 dependency */
+	providedRuntime 'org.springframework.boot:spring-boot-starter-tomcat'
+	
+	/* 3. lombok */
+	compileOnly 'org.projectlombok:lombok'
+	annotationProcessor 'org.projectlombok:lombok'
+	
+	/* 4. devtools */
+	runtimeOnly 'org.springframework.boot:spring-boot-devtools'
+	
+	/* 5. thymeleaf */
+	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
+	
+	/* 6. mybatis */
+	implementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter:2.1.3'
+	
+	/* 7. MariaDB */
+	runtimeOnly 'org.mariadb.jdbc:mariadb-java-client' 
+	
+	/* 8. JDBC */
+	implementation 'org.springframework.boot:spring-boot-starter-jdbc'
+	
+	/* 9. JPA */
+	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+
+	/* 10-4. querydsl dependencies 추가  */
+	implementation "com.querydsl:querydsl-jpa:${queryDslVersion}"
+	annotationProcessor "com.querydsl:querydsl-apt:${queryDslVersion}"
+
+	/* 11. thymeleaf-layout-dialect */
+	implementation group: 'nz.net.ultraq.thymeleaf', name: 'thymeleaf-layout-dialect', version: '3.0.0'
+	
+	/* 12. spring-boot-starter-security */
+	implementation group: 'org.springframework.boot', name: 'spring-boot-starter-security'
+
+	/* 13. validation(Bean Validation) */
+	implementation 'org.springframework.boot:spring-boot-starter-validation'
+	
+	/* 14. modelmapper */
+	implementation group: 'org.modelmapper', name: 'modelmapper', version: '2.3.9'
+
+	/* 15. thymeleaf-extras-springsecurity5 */
+	implementation group: 'org.thymeleaf.extras', name: 'thymeleaf-extras-springsecurity5'
+
+	/* 16. spring-security-test */
+	testImplementation group: 'org.springframework.security', name: 'spring-security-test'
+}
+
+tasks.named('test') {
+	useJUnitPlatform()
+}
+
+/* 10-5. querydsl에서 사용할 경로 지정*/
+def querydslDir = "src/main/generated"
+
+/* 10-6. JPA사용 여부와 사용할 경로를 지정*/
+querydsl {
+	jpa = true
+	querydslSourcesDir = querydslDir
+}
+
+/* 10-7. build시 사용할 SourceSet 추가 */
+sourceSets {
+	main.java.srcDir querydslDir
+}
+
+/* 10-8. querydsl이 complieClasspath를 상속하도록 설정 */
+configurations {
+	querydsl.extendsFrom compileClasspath
+}
+
+/* 10-9. querydsl 컴파일시 사용할 옵션 설정 */
+compileQuerydsl {
+	options.annotationProcessorPath = configurations.querydsl
+}

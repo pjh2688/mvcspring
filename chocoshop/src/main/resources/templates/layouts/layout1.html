@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<head>
+	<meta http-equiv="Content-Type" content="text/html;" charset="UTF-8">
+	<meta charset="UTF-8">
+	<title>shop</title>
+	<!-- 1. CSS only -->
+    <link rel="stylesheet" th:href="@{/assets/plugin/bootstrap/css/bootstrap.min.css}" />
+    <link rel="stylesheet" th:href="@{/assets/css/layout1.css}" />
+    
+    <style type="text/css">
+    	.navbar {
+    		width: 100%;
+    	} 
+    </style>
+    
+    <!-- 2. JS, Popper.js and JQuery -->
+    <script th:src="@{/assets/scripts/jquery.min.js}"></script>
+    <script th:src="@{/assets/plugin/bootstrap/js/bootstrap.min.js}"></script>
+    
+    <th:block layout:fragment="script"></th:block>
+    <th:block layout:fragment="css"></th:block>
+</head>
+<body>
+	<div th:replace="fragments/header::header"></div>
+	
+	<div layout:fragment="content" class="content">
+	
+	</div>
+	
+	<div th:replace="fragments/footer::footer"></div>
+	
+</body>
+</html>
