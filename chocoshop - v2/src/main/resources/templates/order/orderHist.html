@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	  layout:decorate="layouts/layout1">
+	  
+	<!-- 주의 : ajax 사용시 csrf 토큰 사용하려면 이거 넣어줘야 동작한다. -->  
+	<head>
+		<meta name="_csrf" th:content="${_csrf.token}" />
+		<meta name="_csrf_header" th:content="${_csrf.headerName}"/>
+	</head>
+	  
+	<th:block layout:fragment="css">
+		<style>
+			.mb-1 {
+				margin-bottom: 1px;
+			}
+			.mb-2 {
+				margin-bottom: 2px;
+			}
+			.mb-3 {
+				margin-bottom: 3px;
+			}
+			.mb-4 {
+				margin-bottom: 4px;
+			}
+			
+			.ml-3 {
+				margin-left: 5px;
+			}
+			
+			.w-75 {
+				width: 75%;
+			}
+			
+			.d-flex {
+				display: flex;
+			}
+			
+			.content-mg {
+				margin-left: 30%;
+				margin-right: 30%;
+				margin-top: 2%;
+				margin-bottom: 100px;
+			}
+			
+			.card {
+				width: 750px;
+				height: 100%;
+				padding: 30px;
+				margin-bottom: 20px;
+			}
+			
+			.rounded {
+				border-radius: 97%;
+			}
+			.repImgDiv {
+				margin-right: 15px;
+				margin-left: 15px;
+				height: auto;	
+			}
+			.repImg {
+				height: 150px;
+				width: 150px;
+			}
+			
+			.align-self-center {
+				align-self: center;
+			}
+			
+			.fs18 {
+				font-size: 18px;
+			}
+			.fs24 {
+				font-size: 24px;
+			}
+			.font-weight-bold {
+				font-weight: bold;
+			}
+			
+			.font-weight-light {
+				font-weight: lighter;
+			}
+			
+			
+			
+		</style>
+	</th:block>  
+	
+	<th:block layout:fragment="script">
+		<script th:inline="javascript">
+		function cancelOrder(orderId) {
+			var token = $("meta[name='_csrf']").attr("content");
+			var header = $("meta[name='_csrf_header']").attr("content");
+			
+			var url = "/api/order/" + orderId + "/cancel";
+			var paramData = {
+				orderId : orderId	
+			};
+			
+			var param = JSON.stringify(paramData);
+			
+			// 주의 : pageable로 보내주는 page 객체는 0부터 시작
+			var page = [[${page}]];
+			
+			$.ajax({
+				url: url,
+				type: "POST",
+				contentType: "application/json",  // 3-3. 서버로 보낼 데이터 타입
+				data: param,
+				beforeSend: function(xhr) {
+					// 3-4. 데이터를 전송하기 전에 헤더에 csrf 값을 설정
+					xhr.setRequestHeader(header, token);
+				},
+				dataType: "json",  // 3-5. 서버에서 결과값으로 받을 데이터의 타입.
+				cache: false,
+				success: function(result, status) {
+					alert("주문이 취소 되었습니다.");
+					location.href = '/orders/' + page;
+				},
+				error: function(jqXHR, status, error) {
+					
+					if(jqXHR.status == '401') {
+						alert('로그인 후 이용해주세요.');
+						location.href = '/members/login';
+					} else {
+						alert(jqXHR.responseText);
+					}
+				}
+			});
+		}
+		</script>
+	</th:block>  
+
+	<!-- 2022-06-24 -->
+	<div layout:fragment="content" class="content-mg">
+		
+		<h2 class="mb-4">구매 이력</h2>
+		
+		<div th:each="order : ${orders.getContent()}">
+			<div class="d-flex mb-3 align-self-center">
+				<h4 th:text="${order.orderDate} + ' 주문'"></h4>
+				
+				<div class="ml-3">
+					<th:block th:if="${#strings.equals(order.orderStatus, T(com.shop.constant.order.OrderStatus).ORDER)}">
+						<button type="button" class="btn btn-outline-secondary order-complete" th:value="${order.orderId}" th:onclick="cancelOrder(this.value)">주문 취소</button>
+					</th:block>
+					<th:block th:unless="${#strings.equals(order.orderStatus, T(com.shop.constant.order.OrderStatus).ORDER)}">
+						<h4 class="order-cancel">(취소 완료)</h4>
+					</th:block>
+				</div>
+			</div>
+		
+			<div class="card d-flex" style="border: 1px solid #111;">
+				<div th:each="orderItem : ${order.orderItemDtoList}" class="d-flex mb-3">
+					<div class="repImgDiv">
+						<img class="rounded repImg" th:src="${orderItem.imgUrl}" alt="${orderItem.itemNm}"/>
+					</div>
+					<div class="align-self-center w-75">
+						<span th:text="${orderItem.itemNm}" class="fs24 font-weight-bold"></span>
+						<div class="fs18 font-weight-light">
+							<span th:text="${orderItem.orderPrice} + '원'"></span>
+							<span th:text="${orderItem.count} + '개'"></span>
+						</div>
+					</div>
+				</div>
+			</div>	
+		</div>
+		
+	</div>
+</html>

@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"> <!-- 1. layout 기능을 사용하기 위해 html 태그에 layout 네임스페이스를 추가합니다. -->
+<head>
+	<meta charset="UTF-8">
+	<title>chocoshop</title>
+	
+	<!-- 1. CSS only -->
+    <link rel="stylesheet" th:href="@{/assets/plugin/bootstrap/css/bootstrap.min.css}" />
+    <link rel="stylesheet" th:href="@{/assets/css/layout1.css}" />
+    
+    <!-- 2. JS, Popper.js and JQuery -->
+    <script th:src="@{/assets/scripts/jquery.min.js}"></script>
+    <script th:src="@{/assets/plugin/bootstrap/js/bootstrap.min.js}"></script>
+    
+    <style type="text/css">
+    	.navbar {
+    		width: 100%;
+    	} 
+    </style>
+
+    <th:block layout:fragment="script"></th:block>
+    <th:block layout:fragment="css"></th:block>
+</head>
+<body>
+	<!-- 2. th:replace 속성은 해당 속성이 선언된 html 태그를 다른 html 파일로 치환해주는 기능을 제공 fragments/header -> fragments/header.html에 있는 "th:fragment=header" 영역을 가져온다.  -->
+	<div th:replace="fragments/header::header"></div> 
+	
+	<!-- 3. layout에서 변경되는 영역을 fragment로 설정, 앞으로 쇼핑몰을 만들어 가면서 나오는 페이지는 이 영역에 들어간다. -->
+	<div layout:fragment="content" class="content">
+	
+	</div>
+	
+	<!-- 4. fragments/footer -> fragments/footer.html에 있는 "th:fragment=footer" 영역을 가져온다.  -->
+	<div th:replace="fragments/footer::footer"></div>
+	
+</body>
+</html>

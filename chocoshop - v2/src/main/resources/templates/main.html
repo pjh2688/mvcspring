@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	  layout:decorate="layouts/layout1">
+
+	<th:block layout:fragment="css">
+		<style>
+			.carousel-inner > .item {
+				height: 600px;
+			}
+			.margin {
+				margin-bottom: 30px;
+			}
+			.banner {
+				height: 600px;
+				position: absolute;
+				top: 0;
+				left: 0;
+				width: 100%;
+				height: 100%;
+			}
+			.card {
+				border: 1px solid #808080;
+			}
+			.card-title {
+				font-weight: bold;
+			}
+			.card-text {
+				text-overflow: ellipsis;
+				white-space: nowrap;
+				overflow: hidden;
+			}
+			a:hover {
+				text-decoration: none;
+			}
+			.center {
+				text-align: center;
+			}
+		</style>
+	</th:block>  
+	
+	<th:block layout:fragment="script">
+		<script th:inline="javascript">
+			
+			function page(page) {
+				var searchQuery = [[ ${itemSearchDto.searchQuery} ]];
+				
+				location.href = "/" + "?searchQuery=" + searchQuery + "&page=" + page;
+			}
+		</script>
+	</th:block>  
+
+	<div layout:fragment="content" style="margin-left: 150px; margin-right: 150px;">
+		
+		<div id="carouselControls" class="carousel slide margin" data-ride="carousel">
+			<div class="carousel-inner">
+				<div class="carusel-item active item">
+					<img class="d-block w-100 banner" src="./assets/img/home.jpg" alt="First Slide">
+				</div>
+			</div>
+		</div>
+		
+		<input type="hidden" name="searchQuery" th:value="${itemSearchDto.searchQuery}" />
+		
+		<div class="center" th:if="${not #strings.isEmpty(itemSearchDto.searchQuery)}">
+			<p class="h3 font-weight-bold" th:text="${itemSearchDto.searchQuery} + ' 검색 결과'">
+		</div>
+			
+		<div class="row">
+			<th:block th:each="item, status : ${items.getContent()}">
+				<div class="col-md-4 margin">
+					<div class="card">
+						<a class="text-dark" th:href="'/item/' + ${item.id}">
+							<img class="card-img-top" th:src="${item.imgUrl}" width="380" height="400">
+						</a>	
+						<div class="card-body">
+							<h4 class="card-title">[[${item.itemNm}]]</h4>
+							<p class="card-text">[[${item.itemDetail}]]</p>
+							<h3 class="card-title text-danger">[[${item.price}]]원</h3>
+						</div>				
+					</div>
+				</div>
+			</th:block>
+		</div>
+		
+		<div th:with="start=${(items.number/maxPage)*maxPage + 1}, end=(${(items.totalPages == 0) ? 1 : (start + (maxPage - 1) < items.totalPages ? start + (maxPage - 1) : items.totalPages)})" style="display: flex; justify-content: center;">
+			<ul class="pagination justify-content-center">
+				<li class="page-item" th:unless="${items.first}">
+					<a th:onclick="'javascript:page(' + ${items.number - 1} + ')'" aria-label='Previous' class="page-link">
+						<span aria-hidden='true'>Previous</span>
+					</a>
+				</li>
+				
+				<li class="page-item" 
+					th:each="page : ${#numbers.sequence(start, end)}"
+					th:classappend="${items.number eq page - 1} ? 'active' : ''">
+					<a class="page-link" th:inline="text" th:onclick="'javascript:page(' + ${page - 1} + ')'">[[${page}]]</a>
+				</li>
+				
+				<li class="page-item" th:unless="${items.last}" >
+					<a th:onclick="'javascript:page(' + ${items.number + 1} + ')'" aria-label='Next' class="page-link">
+						<span aria-hidden='true'>Next</span>
+					</a>
+				</li>	
+			</ul>
+		</div>
+	</div>
+</html>
