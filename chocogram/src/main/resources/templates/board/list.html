@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+	<meta charset="UTF-8">
+	<link rel="stylesheet" th:href="@{/assets/css/style.css}">
+	<link rel="stylesheet" th:href="@{/assets/plugin/bootstrap/css/bootstrap.min.css}">
+</head>
+<body>
+	<div class="fixed-navbar">
+		<div class="pull-left">
+			<h1 class="page-title">BOARD</h1>
+		</div>
+	</div>
+	<div id="wrapper">
+		<div class="main-content">
+			<div class="row row-inline-block small-spacing">
+				<div class="col-xs-12">
+					<div class="box-content">
+						<div class="clearfix">
+							<h4 class="box-title pull-left"></h4>
+						</div>
+					
+						<!-- /* 페이지 Content 영역 */ -->
+						<div class="card-content" style="display: table; margin: 0 auto;">
+							<!-- /* 검색 영역 */ -->
+							<div id="adv-search" class="input-group">
+								<form id="searchForm" onsubmit="return false;">
+									<select id="searchType" class="form-control" style="width: 100px;">
+										<option value="">전체</option>
+										<option value="title">제목</option>
+										<option value="content">내용</option>
+										<option value="writer">작성자</option>
+									</select>
+									<input type="text" id="keyword" class="form-control" placeholder="키워드를 입력해주세요." style="width: 300px;" />
+								</form>
+								<button type="button" class="btn btn-primary">
+									<span aria-hidden="true" class="glyphicon glyphicon-search"></span>
+								</button>
+							</div>
+							<br/>
+							
+							<!-- /* 게시글 영역 */ -->
+							<div class="table-responsive clearfix">
+								<table class="table table-hover">
+									<thead>
+										<tr>
+											<th>번호</th>
+											<th>제목</th>
+											<th>작성자</th>
+											<th>등록일</th>
+											<th>조회수</th>
+										</tr>
+									</thead>
+									
+									<!-- /* 게시글 리스트 rending 영역 */ -->
+									<tbody id="list">
+									</tbody>
+								</table>
+								
+							</div>
+							<!-- /* 페이지네이션 rending 영역 */ -->
+							<nav class="text-center" aria-label="Page Navigation">
+								<ul class="pagination">
+								
+								</ul>
+							</nav>
+							<div class="btn_wrap text-right">
+								<a href="/board/write" class="btn btn-primary waves-effect waves-light">글쓰기</a>
+							</div>
+						</div>
+						
+					</div>
+				</div>
+			</div>
+			<footer class="footer">
+				<ul class="list-inline">
+					<li>2022  ⓒ JADECROSS Admin.</li>
+				</ul>
+			</footer>
+		</div>
+	</div>
+	
+	<script th:src="@{/assets/scripts/jquery.min.js}"></script>
+	<script th:src="@{/assets/plugin/bootstrap/js/bootstrap.min.js}"></script>
+	<script th:src="@{/assets/scripts/moment.min.js}"></script>
+	<script th:inline="javascript">
+		/*<![CDATA[*/
+			/**
+			 * 1. 페이지 로딩 시점에 실행되는 함수.
+			 */
+			window.onload = () => {
+				setQueryStringParams();
+				findAll();
+				addEnterSearchEvent();
+			}
+			
+			/**
+			 * 2. 게시글 리스트 조회
+			
+			function findAll() {
+				
+				$.ajax({
+					url: "/api/boards?deleteYn=N",
+					type: "GET",
+					dataType: "json",
+					contentType: "application/json; charset=UTF-8",
+					success: function(data) {
+						let html = '';
+						
+						if(!data.length) {
+							html = '<td colspan="5">등록된 게시글이 없습니다.</td>';
+						} else {
+							for(var i = 0; i < data.length; i++) {
+								html += `
+									<tr>
+										<td>${data.length - i}</td>
+										<td class="text-left">
+											<a href="/board/view/${data[i].id}">${data[i].title}</a>
+										</td>
+										<td>${data[i].writer}</td>
+										<td>${moment(data[i].createdDate).format('YYYY-MM-DD HH:mm:ss')}</td>
+										<td>${data[i].hits}</td>
+									</tr>
+								`;
+							}
+							document.getElementById('list').innerHTML = html;
+						}
+					},
+					error: function() {
+						alert("오류가 발생하였습니다");
+					}
+				});
+			}
+			*/
+			
+			/**
+			  3-1. 키워드 - 엔터 검색 이벤트 바인딩
+			*/
+			function addEnterSearchEvent() {
+				document.getElementById('keyword').addEventListener('keyup', e => {
+					if(e.keyCode == 13) {
+						findAll(1);
+					}
+				});
+			}
+			
+			function setQueryStringParams() {
+				if(!location.search) {
+					return false;
+				}
+				
+				const form = document.getElementById('searchForm');
+				
+				new URLSearchParams(location.search).forEach( (value, key) => {
+					if(form[key]) {
+						form[key].value = value;
+					}
+				});
+			}
+			
+			/**
+			  3-2. 게시글 리스트 조회(페이징)
+			*/
+			function findAll(page) {
+				
+				const pageParam = Number(new URLSearchParams(location.search).get('page'));
+				
+				page = (page) ? page : ((pageParam) ? pageParam : 1);
+				
+				const form = document.getElementById('searchForm');
+				
+				const params = {
+					page: page,
+					recordPerPage: 10,
+					pageSize: 5,
+					searchType: form.searchType.value,
+					keyword: form.keyword.value
+				}
+				
+				const queryString = new URLSearchParams(params).toString();
+				const replaceURI = location.pathname + '?' + queryString;
+				history.replaceState({}, '', replaceURI);
+				
+				$.ajax({
+					url: "/api/boards",
+					type: "GET",
+					data: params,
+					dataType: "json",
+					contentType: "application/json; charset=UTF-8",
+					success: function(data) {
+						
+						// 3-3. 게시글 리스트 출력
+						let html = '';
+						
+						let num = data.params.pagination.totalRecordCount - (data.params.page - 1) * data.params.recordPerPage;
+						
+						let params = data.params;
+						
+						if(!data.list.length) {
+							html = '<td colspan="5">등록된 게시글이 없습니다.</td>';
+						} else {
+							for(var i = 0; i < data.list.length; i++) {
+								const viewURI = `/board/view/${data.list[i].id}` + '?' + queryString;
+								html += `
+									<tr>
+										<td>${num--}</td>
+										<td class="text-left">
+											<a href="${viewURI}">${data.list[i].title}</a>
+										</td>
+										<td>${data.list[i].writer}</td>
+										<td>${moment(data.list[i].createdDate).format('YYYY-MM-DD HH:mm:ss')}</td>
+										<td>${data.list[i].hits}</td>
+									</tr>
+								`;
+							}
+						}
+						document.getElementById('list').innerHTML = html;
+						
+						// 3-4. 게시글 페이징 출력
+						html = '';
+						
+						if(!data.params) {
+							document.querySelector('.pagination').innerHTML = '';
+							return false;
+						}
+						
+						const pagination = data.params.pagination;
+						
+						// 3-5. 이전 페이지, 처음 페이지
+						if(pagination.existPrevPage) {
+							html += `
+								<li>
+									<a href="javascript:void(0)" onclick="findAll(1)" aria-label="Previous">
+										<span>&laquo;</span>
+									</a>
+								</li>
+								<li>
+								<a href="javascript:void(0)" onclick="findAll(${pagination.startPage - 1})" aria-label="Previous">
+									<span>&lsaquo;</span>
+								</a>
+							</li>
+							`;
+						}
+						
+						// 3-6. 페이지 번호
+						for(var i = pagination.startPage; i <= pagination.endPage; i++) {
+							const active = (i === params.page) ? 'class="active"' : '';
+							html += `
+								<li ${active}>
+									<a href="javascript:void(0)" onclick="findAll(${i})">${i}</a>
+								</li>
+							`;
+						}
+						
+						// 3-7. 다음 페이지, 마지막 페이지
+						if(pagination.existNextPage) {
+							html += `
+								<li>
+									<a href="javascript:void(0)" onclick="findAll(${params.page + 1})" aria-label="Next">
+										<span>&rsaquo;</span>
+									</a>
+								</li>
+								<li>
+								<a href="javascript:void(0)" onclick="findAll(${pagination.totalPageCount})" aria-label="Next">
+									<span>&raquo;</span>
+								</a>
+							</li>
+							`;
+						}
+						
+						
+						document.querySelector('.pagination').innerHTML = html;
+					},
+					error: function() {
+						alert("오류가 발생하였습니다");
+					}
+				});
+			}
+			
+		/*]]>*/
+	</script>
+	
+	
+</body>
+</html>

@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+	<meta charset="UTF-8">
+	<link rel="stylesheet" th:href="@{/assets/css/style.css}">
+	<link rel="stylesheet" th:href="@{/assets/plugin/bootstrap/css/bootstrap.min.css}">
+</head>
+<body>
+	<div class="fixed-navbar">
+		<div class="pull-left">
+			<h1 class="page-title">BOARD</h1>
+		</div>
+	</div>
+	<div id="wrapper">
+		<div class="main-content">
+			<div class="row row-inline-block small-spacing">
+				<div class="col-xs-12">
+					<div class="box-content">
+						<div class="clearfix">
+							<h4 class="box-title pull-left"></h4>
+						</div>
+					
+						<!-- /* 페이지 Content 영역 */ -->
+						<div class="card-content" style="display: table; width: 700px; margin: 0 auto;">
+							<form id="form" class="form-horizontal form-view">
+								<div class="form-group">
+									<label for="title" class="col-sm-2 control-label">제목</label>
+									<div class="col-sm-10">
+										<input type="text" id="title" class="form-control"/>
+									</div> 
+								</div>
+							
+								<div class="form-group">
+									<label for="writer" class="col-sm-2 control-label">이름</label>
+									<div class="col-sm-10">
+										<input type="text" id="writer" class="form-control" readonly="readonly"/>
+									</div>
+								</div>
+							
+								<div class="form-group">
+									<label for="content" class="col-sm-2 control-label">내용</label>
+									<div class="col-sm-10">
+										<textarea id="content" class="form-control" rows="10"></textarea>
+									</div>
+								</div>
+								
+								<div class="form-group">
+									<label for="createdDate" class="col-sm-2 control-label">등록일</label>
+									<div class="col-sm-10">
+										<input type="text" id="createdDate" class="form-control" readonly="readonly"/>
+									</div>
+								</div>
+								
+								<div class="form-group">
+									<label for="hits" class="col-sm-2 control-label">조회수</label>
+									<div class="col-sm-10">
+										<input type="text" id="hits" class="form-control" readonly="readonly"/>
+									</div>
+								</div>
+							</form>
+							
+							<div class="btn_wrap text-center">
+								<a th:onclick="updateBoard();" class="btn btn-primary waves-effect waves-light">수정하기</a>
+								<button type="button" th:onclick="deleteBoard();" class="btn btn-danger waves-effect waves-light">삭제하기</button>
+								<a th:onclick="goList();" class="btn btn-default waves-effect waves-light">뒤로가기</a>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		
+			<footer class="footer">
+				<ul class="list-inline">
+					<li>2022  ⓒ JADECROSS Admin.</li>
+				</ul>
+			</footer>
+		</div>
+	</div>
+	
+	<script th:src="@{/assets/scripts/jquery.min.js}"></script>
+	<script th:src="@{/assets/plugin/bootstrap/js/bootstrap.min.js}"></script>
+	<script th:src="@{/assets/scripts/moment.min.js}"></script>
+	<script th:inline="javascript">
+	/*<![CDATA[*/
+		
+		window.onload = () => {
+			findBoard();
+		}
+		
+		/**
+		  1. 게시글 조회
+		 */
+		function findBoard() {
+			const id = /*[[ ${id} ]]*/;
+			
+			if( !id ) {
+				return false;
+			}
+			
+			$.ajax({
+				url: `/api/boards/${id}`,
+				type: "GET",
+				dataType: "json",
+				contentType: "application/json; charset=UTF-8",
+				success: function(data) {
+					const form = document.getElementById('form');
+					
+					form.title.value = data.title;
+					form.writer.value = data.writer;
+					form.content.value = data.content;
+					form.createdDate.value = moment(data.createdDate).format('YYYY-MM-DD HH:mm:ss');
+					form.hits.value = data.hits;
+					
+				},
+				error: function() {
+					alert('게시글 정보를 찾을 수 없습니다');
+					goList();
+				}
+				
+			});
+		} 
+		
+		/* 2. 유효성 검사 */
+		function isValid() {
+			const form = document.getElementById('form');
+			
+			if(!form.title.value.trim()) {
+				alert('제목을 입력해주세요.');
+				form.title.value = '';
+				form.title.focus();
+				return false;
+			}
+			
+			if(!form.writer.value.trim()) {
+				alert('작성자을 입력해주세요.');
+				form.writer.value = '';
+				form.writer.focus();
+				return false;
+			}
+			
+			if(!form.content.value.trim()) {
+				alert('내용을 입력해주세요.');
+				form.content.value = '';
+				form.content.focus();
+				return false;
+			}
+			
+			return true;
+		}
+		
+		/* 3. 게시글 수정(create/update) */
+		function updateBoard() {
+			if(!isValid()) {
+				return false;
+			}
+			
+			const form = document.getElementById('form');
+			
+			const params = {
+				title: form.title.value,
+				writer: form.writer.value,
+				content: form.content.value,
+				deleteYn: 'N'
+			};
+			
+			const id = /*[[ ${id} ]]*/;
+			
+			if(!confirm(`${id}번 게시글을 수정할까요?`)) {
+				return false;
+			}
+			
+			$.ajax({
+				data: JSON.stringify(params),
+				url: `/api/boards/${id}`,
+				type: "PATCH",
+				dataType: "json",
+				contentType: "application/json; charset=UTF-8",
+				success: function(res) {
+					
+					if(!res) {
+						throw new Error('Request failed');
+					}
+					
+					alert('수정되었습니다.');
+					
+					goList();
+				},
+				error: function() {
+					alert('오류가 발생하였습니다.');
+					goList();
+				}
+			});
+		}
+		
+		/**
+		  4. 게시글 조회
+		 */
+		function deleteBoard() {
+			const id = /*[[ ${id} ]]*/;
+			
+			if( !confirm(`${id}번 게시글을 삭제할까요?`) ) {
+				return false;
+			}
+			
+			$.ajax({
+				url: `/api/boards/${id}`,
+				type: "DELETE",
+				dataType: "json",
+				contentType: "application/json; charset=UTF-8",
+				success: function(res) {
+					if(!res) {
+						throw new Error('Request failed');
+					}
+					
+					alert('삭제되었습니다.');
+					
+					goList();
+					
+				},
+				error: function() {
+					alert('오류가 발생했습니다.');
+					goList();
+				}
+				
+			});
+		}
+		
+		/* 5. 뒤로 가기 */
+		function goList() {
+			location.href = '/board/list' + location.search;
+		}
+		/*]]>*/
+	</script>
+	
+	
+</body>
+</html>

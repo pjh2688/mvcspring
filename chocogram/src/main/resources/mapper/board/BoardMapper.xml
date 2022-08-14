@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.chocogram.mapper.board.IBoardMapper">
+	
+	<!-- SELECT 결과 Map -->
+	<resultMap id="BoardResultMap" type="com.chocogram.entity.board.dto.BoardResponseDto">
+		<result property="id" column="id"/>
+		<result property="title" column="title"/>
+		<result property="content" column="content"/>
+		<result property="writer" column="writer"/>
+		<result property="hits" column="hits"/>
+		<result property="deleteYn" column="delete_yn"/>
+		<result property="createdDate" column="created_date"/>
+		<result property="modifiedDate" column="modified_date"/>
+	</resultMap>
+	
+	<!-- WHERE 조건 -->
+	<sql id="conditions">
+		<where>
+			delete_yn = 'N'
+			<if test="keyword != null and keyword.equals('') == false">
+				<choose>
+					<when test="searchType = null or searchType.equals('')">
+						AND (
+							   title LIKE CONCAT('%', #{keyword}, '%')
+							OR content LIKE CONCAT('%', #{keyword}, '%')
+							OR writer LIKE CONCAT('%', #{keyword}, '%')   
+						)
+					</when>
+					<otherwise>
+						<choose>
+							<when test="searchType.equals('title')">
+								AND title LIKE CONCAT('%', #{keyword}, '%')
+							</when>
+							<when test="searchType.equals('content')">
+								AND content LIKE CONCAT('%', #{keyword}, '%')
+							</when>
+							<when test="searchType.equals('writer')">
+								AND writer LIKE CONCAT('%', #{keyword}, '%')
+							</when>
+						</choose>
+					</otherwise>
+				</choose>
+			</if>
+		</where>
+	</sql>
+	
+	<!-- 게시글 갯수 조회 -->
+	<select id="count" parameterType="com.chocogram.paging.CommonParams" resultType="int">
+		SELECT
+			COUNT(*)
+		FROM
+			board
+	</select>
+	
+	<!-- 게시글 리스트 조회 -->
+	<select id="findAll" parameterType="com.chocogram.paging.CommonParams" resultMap="BoardResultMap">
+		SELECT
+			id,
+			title,
+			content,
+			writer,
+			hits,
+			delete_yn,
+			created_date,
+			modified_date
+		FROM
+			board
+		<include refid="conditions" />
+		ORDER BY
+			id DESC, created_date DESC
+		LIMIT
+			#{pagination.limitStart}, #{recordPerPage}
+	</select>
+	
+</mapper>
