@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Photogram</title>
+    <!-- css -->
+    <link th:href="@{/photogram/css/style.css}"
+    		href="../photogram/css/style.css" rel="stylesheet">
+    <link th:href="@{/photogram/css/story.css}"
+    		href="../photogram/css/story.css" rel="stylesheet">
+    <link th:href="@{/photogram/css/popular.css}"
+    		href="../photogram/css/popular.css" rel="stylesheet">
+    <link th:href="@{/photogram/css/profile.css}"
+    		href="../photogram/css/profile.css" rel="stylesheet">
+    <link th:href="@{/photogram/css/upload.css}"
+    		href="../photogram/css/upload.css" rel="stylesheet">
+    <link th:href="@{/photogram/css/update.css}"
+    		href="../photogram/css/update.css" rel="stylesheet">
+    		
+	<!-- fontawesome  -->  
+    <link th:href="@{/photogram/fontawesome/css/all.min.css}"
+    		href="../photogram/fontawesome/css/all.min.css" rel="stylesheet">
+	
+	<!-- google fonts -->
+	<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@100;200;300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+	<header class="header">
+		<div class="container">
+			<a href="/" class="logo">
+				<img src="/photogram/images/logo.jpg" alt="">
+			</a>
+			<nav class="navi">
+				<ul class="navi-list">
+					<li class="navi-item">
+						<a href="/">
+							<i class="fas fa-home"></i>
+						</a>
+					</li>
+					<li class="navi-item">
+						<a href="/image/popular">
+							<i class="far fa-compass"></i>
+						</a>
+					</li>
+					<li class="navi-item">
+						<a th:href="@{/user/} + ${principal.user.id}">
+							<i class="far fa-user"></i>
+						</a>
+					</li>
+				</ul>
+			</nav>
+		</div>
+	</header>
+
+	<div class="popular">
+		<!--인기 게시글-->
+		<div class="exploreContainer">
+			<!-- 2022-07-16 -> 69강 완료 -->
+			<!--인기게시글 갤러리(GRID배치)-->
+			<div class="popular-gallery">
+				<div class="p-img-box" th:each="image : ${images}">
+					<a th:href="@{/user/} + ${image.user.id}">
+						<img th:src="@{/upload/} + ${image.postImageUrl}">
+					</a>
+				</div>
+			</div>
+
+		</div>
+	</div>
+	
+	<footer>
+		<div class="container">
+			<ul>
+				<li><a href="#a">소개</a></li>
+				<li><a href="#a">블로그</a></li>
+				<li><a href="#a">채용 정보</a></li>
+				<li><a href="#a">도움말</a></li>
+				<li><a href="#a">API</a></li>
+				<li><a href="#a">개인정보처리방침</a></li>
+				<li><a href="#a">약관</a></li>
+				<li><a href="#a">인기 계정</a></li>
+				<li><a href="#a">해시태그</a></li>
+				<li><a href="#a">위치</a></li>
+			</ul>
+			<div class="copy">
+				<p>© 2022 Photogram from PARK JONG HEE</p>
+			</div>
+		</div>
+	</footer>
+</body>
+</html>

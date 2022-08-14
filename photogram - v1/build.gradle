@@ -1,0 +1,67 @@
+plugins {
+	id 'org.springframework.boot' version '2.6.4'
+	id 'io.spring.dependency-management' version '1.0.11.RELEASE'
+	id 'java'
+	id 'war'
+}
+
+group = 'com.photogram'
+version = '0.0.1-SNAPSHOT'
+sourceCompatibility = '1.8'
+
+repositories {
+	mavenCentral()
+}
+
+dependencies {
+	/* 1. web */
+	implementation 'org.springframework.boot:spring-boot-starter-web'
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	
+	/* 2. 배포시 내장톰캣을 사용하지 않을거라는 dependency */
+	providedRuntime 'org.springframework.boot:spring-boot-starter-tomcat'
+	
+	/* 3. lombok */
+	compileOnly 'org.projectlombok:lombok'
+	annotationProcessor 'org.projectlombok:lombok'
+	
+	/* 4. devtools */
+	runtimeOnly 'org.springframework.boot:spring-boot-devtools'
+	
+	/* 5. security */
+	implementation group: 'org.springframework.boot', name: 'spring-boot-starter-security', version: '2.6.3'
+	
+	/* 6. thymeleaf */
+	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
+	
+	/* 7. mybatis */
+	implementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter:2.1.3'
+	
+	/* 8. MariaDB */
+	runtimeOnly 'org.mariadb.jdbc:mariadb-java-client' 
+	
+	/* 9. JDBC */
+	implementation 'org.springframework.boot:spring-boot-starter-jdbc'
+	
+	/* 10. JPA */
+	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+	
+	/* 11. validation */
+	implementation group: 'org.springframework.boot', name: 'spring-boot-starter-validation', version: '2.6.4'
+	
+	/* 12. Security 사용자 정보 출력 in Thymeleaf */
+	implementation 'org.thymeleaf.extras:thymeleaf-extras-springsecurity5'
+
+	/* 13. QLRM */
+	implementation group: 'org.qlrm', name: 'qlrm', version: '3.0.4'
+
+	/* 14. AOP */
+	implementation 'org.springframework.boot:spring-boot-starter-aop:2.6.1'
+
+	/* 15. oauth2-client */
+	implementation 'org.springframework.boot:spring-boot-starter-oauth2-client:2.6.4' 
+}
+	
+tasks.named('test') {
+	useJUnitPlatform()
+}

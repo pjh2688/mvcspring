@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Photogram</title>
+    <!-- css -->
+    <link th:href="@{/photogram/css/style.css}"
+    		href="../photogram/css/style.css" rel="stylesheet">
+    <link th:href="@{/photogram/css/story.css}"
+    		href="../photogram/css/story.css" rel="stylesheet">
+    <link th:href="@{/photogram/css/popular.css}"
+    		href="../photogram/css/popular.css" rel="stylesheet">
+    <link th:href="@{/photogram/css/profile.css}"
+    		href="../photogram/css/profile.css" rel="stylesheet">
+    <link th:href="@{/photogram/css/upload.css}"
+    		href="../photogram/css/upload.css" rel="stylesheet">
+    <link th:href="@{/photogram/css/update.css}"
+    		href="../photogram/css/update.css" rel="stylesheet">
+    		
+	<!-- fontawesome  -->  
+    <link th:href="@{/photogram/fontawesome/css/all.min.css}"
+    		href="../photogram/fontawesome/css/all.min.css" rel="stylesheet">
+	
+	<!-- google fonts -->
+	<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@100;200;300;400;500;600;700&display=swap" rel="stylesheet">
+
+	<style>
+		.dl {
+			justify-content: space-between;
+		}
+	</style>
+</head>
+<body>
+	<header class="header">
+		<div class="container">
+			<a href="/" class="logo">
+				<img src="/photogram/images/logo.jpg" alt="">
+			</a>
+			<nav class="navi">
+				<ul class="navi-list">
+					<li class="navi-item">
+						<a href="/">
+							<i class="fas fa-home"></i>
+						</a>
+					</li>
+					<li class="navi-item">
+						<a href="/image/popular">
+							<i class="far fa-compass"></i>
+						</a>
+					</li>
+					<li class="navi-item">
+						<a th:href="@{/user/} + ${userDto.user.id}">
+							<i class="far fa-user"></i>
+						</a>
+					</li>
+				</ul>
+			</nav>
+		</div>
+	</header>
+
+	<!--프로필 섹션-->
+	<section class="profile">
+		<!--유저정보 컨테이너-->
+		<div class="profileContainer">
+
+			<!--유저이미지-->
+			<div class="profile-left">
+				<div class="profile-img-wrap story-border" onclick="popup('.modal-image')">
+				
+					<form id="userProfileImageForm">
+						<input type="file" name="profileImageFile" style="display: none;" id="userProfileImageInput" />
+					</form>
+
+					<img class="profile-image" th:src="@{/upload/} + ${userDto.user.profileImageUrl}" onerror="this.src='/photogram/images/person.jpeg'" id="userProfileImage" />
+					
+				</div>
+			
+			</div>
+			<!--유저이미지end-->
+
+			<!--유저정보 및 사진등록 구독하기-->
+			<div class="profile-right">
+				<div class="name-group">
+					<h2 th:text="${userDto.user.name}"></h2>
+					
+					<div th:if="${userDto.pageOwnerState}" style="padding-top: 3px;">
+						<button class="cta" onclick="location.href='/image/upload'">사진등록</button>
+					</div>
+					
+					<div th:unless="${userDto.pageOwnerState}" style="padding-top: 3px;">
+						
+						<div th:if="${userDto.subscribeState}">
+							<button class="cta blue" th:onclick="toggleSubscribe([[ ${userDto.user.id} ]], this)">구독취소</button>
+						</div>	
+						
+						<div th:unless="${userDto.subscribeState}">
+							<button class="cta" th:onclick="toggleSubscribe([[ ${userDto.user.id} ]], this)">구독하기</button>
+						</div>
+									
+					</div>
+			
+					<button class="modi" onclick="popup('.modal-info');"><i class="fas fa-cog"></i></button>
+				</div>
+
+				<div class="subscribe">
+					<ul>
+						<li>
+							<a href="">게시물<span th:text="${userDto.imageCount}">1</span></a>
+						</li>
+						<li>
+							<a th:onclick="subscribeInfoModalOpen([[ ${userDto.user.id} ]]);">구독정보<span th:text="${userDto.subscribeCount}">1</span></a>
+						</li>
+					</ul>
+				</div>
+				<div class="state">
+					<h4 th:text="${userDto.user.bio}"></h4>
+					<h4 th:text="${userDto.user.website}"></h4>
+				</div>
+			</div>
+			<!--유저정보 및 사진등록 구독하기-->
+		</div>
+	
+	</section>
+
+	<!--게시물컨섹션-->
+	<section id="tab-content">
+		<!--게시물컨컨테이너-->
+		<div class="profileContainer">
+			<!--그냥 감싸는 div (지우면이미지커짐)-->
+			<div id="tab-1-content" class="tab-content-item show">
+				<!--게시물컨 그리드배열-->
+				<div class="tab-1-content-inner">
+
+					<!--아이템들-->
+					<div th:each="image : ${userDto.user.images}">
+					<!--  	<a th:text="${image.postImageUrl}"></a>  -->
+						<div class="img-box">
+							<a href="">
+								<img class="subscribe-image" th:src="@{/upload/} + ${image.postImageUrl}" />
+							</a>
+							<div class="comment">
+								<a href="#" class=""> 
+									<i class="fas fa-heart"></i><span th:text="${image.likeCount}">0</span>
+								</a>
+							</div>
+						</div>
+					</div>
+			
+				<!--아이템들end-->
+				</div>
+			</div>
+		</div>
+	</section>
+	
+	<footer>
+		<div class="container">
+			<ul>
+				<li><a href="#a">소개</a></li>
+				<li><a href="#a">블로그</a></li>
+				<li><a href="#a">채용 정보</a></li>
+				<li><a href="#a">도움말</a></li>
+				<li><a href="#a">API</a></li>
+				<li><a href="#a">개인정보처리방침</a></li>
+				<li><a href="#a">약관</a></li>
+				<li><a href="#a">인기 계정</a></li>
+				<li><a href="#a">해시태그</a></li>
+				<li><a href="#a">위치</a></li>
+			</ul>
+			<div class="copy">
+				<p>© 2022 Photogram from PARK JONG HEE</p>
+			</div>
+		</div>
+	</footer>
+	
+	<!-- modal 모음 -->
+	
+	<!--로그아웃, 회원정보변경 모달-->
+	<div class="modal-info" th:onclick="modalInfo()">
+		<div class="modal">
+			<button th:onclick="location.href='/user/' + [[ ${userDto.user.id} ]] + '/update'">회원정보 변경</button>
+			<button th:onclick="location.href='/logout'">로그아웃</button>
+			<button th:onclick="closePopup('.modal-info')">취소</button>
+		</div>
+	</div>
+	<!--로그아웃, 회원정보변경 모달 end-->
+	
+	<!-- 구독 정보 모달 -->
+	<div class="modal-subscribe">
+		<div class="subscribe">
+			<div class="subscribe-header">
+				<span>구독정보</span>
+				<button th:onclick="modalClose()"><i class="fas fa-times"></i></button>
+			</div>
+			
+			<div class="subscribe-list" id="subscribeModalList">
+				
+			</div>
+		</div>
+	</div>
+	<!-- 구독 정보 모달 -->
+	
+	<!--프로필사진 바꾸기 모달-->
+	<div class="modal-image" onclick="modalImage()">
+		<div class="modal">
+			<p>프로필 사진 바꾸기</p>
+			<!-- 2022-07-24 -> 73차시 준비 완료  -->
+			<button th:onclick="profileImageUpload([[ ${userDto.user.id} ]], [[ ${principal.user.id} ]]);">사진 업로드</button>
+			<button th:onclick="closePopup('.modal-image')">취소</button>
+			
+		</div>
+	</div>
+</body>
+
+<script th:src="@{/photogram/js/jquery.min.js}"></script>
+
+<script th:inline="javascript">
+	
+	// (4). 사용자 정보 메뉴 열기
+	function popup(obj) {
+		$(obj).css("display", "flex");
+	}
+	// (5). 사용자 정보 메뉴 닫기
+	function closePopup(obj) {
+		$(obj).css("display", "none");
+	}
+	
+	// (6). 사용자 정보(회원정보, 로그아웃, 닫기) 모달 닫기
+	function modalInfo() {
+		$(".modal-info").css("display", "none");
+	}
+	
+	// (7). 사용자 프로파일 이미지 메뉴(사진업로드, 취소) 모달
+	function modalImage() {
+		$(".modal-image").css("display", "none");
+	}
+	
+	// (8). 사용자 정보(회원정보, 로그아웃, 닫기) 모달 닫기
+	function modalClose() {
+		$(".modal-subscribe").css("display", "none");
+		location.reload();
+	}
+	
+	// (9). 유저 프로필 페이지 구독하기, 구독취소 기능
+	function toggleSubscribe(toUserId, obj) {
+		if($(obj).text() === "구독취소") {
+			
+			$.ajax({
+				type: "delete",
+				url: "/api/subscribe/" + toUserId,
+				dataType: "json",
+				success: function(res) { 
+					$(obj).text("구독하기");
+					$(obj).toggleClass("blue");
+				},
+				error: function(error) {  
+					if(error.data == null) {
+						alert(error.responseJSON.message);
+					} else {
+						alert(error.responseJSON.data);
+					}
+					
+				}
+			});
+			
+		} else if($(obj).text() == "구독하기"){
+			
+			$.ajax({
+				type: "post",
+				url: "/api/subscribe/" + toUserId,
+				dataType: "json",
+				success: function(res) { 
+					$(obj).text("구독취소");
+					$(obj).toggleClass("blue");
+					
+				},
+				error: function(error) {  
+					if(error.data == null) {
+						alert(error.responseJSON.message);
+					} else {
+						alert(error.responseJSON.data);
+					}
+					
+				}
+			});
+		}
+	}
+	
+	// (10). 구독자 정보 모달 보기
+	function subscribeInfoModalOpen(pageUserId) {
+		$(".modal-subscribe").css("display", "flex");
+		
+		$.ajax({
+			type: "get",
+			url: "/api/user/" + pageUserId + "/subscribe",
+			dataType: "json",
+			success: function(res) { 
+				
+				res.data.list.forEach( (user) => {
+					let item = getSubscribeModalItem(user);
+					
+					$("#subscribeModalList").append(item);
+					
+				});
+				
+			},
+			error: function(error) {  
+				console.log("구독정보 불러오기 오류", error);
+			}
+		});
+	}
+
+	// (11)
+	function getSubscribeModalItem(user) {
+		console.log(user)
+		let item = 
+			`<div class="subscribe__item" id="subscribeModalItem-${user.id}">` + 
+				`<div class="subscribe__img">` + 
+					`<img src="/photogram/images/person.jpeg" onerror="this.src='/photogram/images/person.jpeg'"/>` +
+				`</div>` + 
+				`<div class="subscribe__text">` + 
+					`<h2>${user.username}</h2>` + 
+				`</div>` + 
+				`<div class="subscribe__btn">`;  
+				
+				if(!user.equalUserState) {
+					if(user.subscribeState) {
+						item += `<button class="cta blue" onclick="toggleSubscribe(${user.id}, this)">구독취소</button>`;
+					} else {
+						item += `<button class="cta" onclick="toggleSubscribe(${user.id}, this)">구독하기</button>`;
+					}
+				}
+				
+			item += 	
+				`</div>` + 
+			`</div>`;
+		
+		return item;
+	}
+	
+	// 12-1. 유저 프로파일 사진 변경 
+	function profileImageUpload(pageUserId, principalId) {
+		
+	//	console.log(pageUserId + ", " + principalId);
+		
+		// 12-2. 해당 페이지를 보고 있는 사람이 페이지의 주인이 아니면
+		if(pageUserId != principalId) {
+			alert("프로필 사진을 수정할 수 없는 유저입니다.")
+			return;
+		}
+		
+		// 12-3. input type file 강제로 열기
+		$("#userProfileImageInput").click();
+		
+		// 12-4.
+		$("#userProfileImageInput").on("change", (e) => {
+			let f = e.target.files[0];
+			
+			if(!f.type.match("image.*")) {
+				alert("이미지를 등록해야 합니다.");
+				return;	
+			}
+			
+			// 12-6. 서버에 사진 전송
+			let profileImageForm = $("#userProfileImageForm")[0];
+			
+			// 12-7. FormData 객체를 이용하면 form태그의 필드와 그 값을 나타내는 일련의 key, value 쌍을 담을 수 있다.
+			let formData = new FormData(profileImageForm);
+			
+			console.log(formData);
+			
+			$.ajax({
+				type: "put",
+				url: `/api/user/${principalId}/profileImageUrl`,
+				data: formData,
+				contentType: false, // x-www-form-urlencoded로 파싱되는 것을 방지
+				processData: false, // contentType을 false로 주면 QueryString으로 자동 설정됨
+				enctype: "multipart/form-data",
+				dataType: "json",
+				success: function(res) { 
+					// 12-5. 사진 전송 성공시 이미지 변경
+					let reader = new FileReader();
+					reader.onload = (e) => {
+						$("#userProfileImage").attr("src", e.target.result);
+					}
+					
+					reader.readAsDataURL(f);
+				
+				},
+				error: function(error) {  
+					console.log("사진 변경 실패", error);
+				}
+			});
+		});
+		
+		// 2022-07-25 -> 기타 기능 구현 완료. -> 다음에 72강부터
+	}
+	
+</script>
+</html>
