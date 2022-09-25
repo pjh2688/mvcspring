@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	  xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+<meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Photogram</title>
+    <!-- css -->
+    <link th:href="@{/photogram/css/style.css}"
+    		href="../photogram/css/style.css" rel="stylesheet">
+    <link th:href="@{/photogram/css/story.css}"
+    		href="../photogram/css/story.css" rel="stylesheet">
+    <link th:href="@{/photogram/css/popular.css}"
+    		href="../photogram/css/popular.css" rel="stylesheet">
+    <link th:href="@{/photogram/css/profile.css}"
+    		href="../photogram/css/profile.css" rel="stylesheet">
+    <link th:href="@{/photogram/css/upload.css}"
+    		href="../photogram/css/upload.css" rel="stylesheet">
+    <link th:href="@{/photogram/css/update.css}"
+    		href="../photogram/css/update.css" rel="stylesheet">
+    		
+	<!-- fontawesome  -->  
+    <link th:href="@{/photogram/fontawesome/css/all.min.css}"
+    		href="../photogram/fontawesome/css/all.min.css" rel="stylesheet">
+	
+</head>
+<body>
+	<!-- 서버에서 전송한 principal id 담아두기(javascript 단에서 사용하기 위해) -->
+	<input type="hidden" id="principalId" name="principalId" th:value="${principal.id}">
+	
+	<header class="header">
+		<div class="container">
+			<a href="/" class="logo">
+				<img src="/photogram/images/logo.jpg" alt="">
+			</a>
+			<nav class="navi">
+				<ul class="navi-list">
+					<li class="navi-item" sec:authorize="isAuthenticated()">
+						<a href="/image/story">
+							<i class="fas fa-home"></i>
+						</a>
+					</li>
+					<li class="navi-item" sec:authorize="hasAnyAuthority('ROLE_ADMIN', 'ROLE_USER')">
+						<a href="/image/popular">
+							<i class="far fa-compass"></i>
+						</a>
+					</li>
+					<li class="navi-item" sec:authorize="hasAnyAuthority('ROLE_ADMIN', 'ROLE_USER')">
+						<a th:href="'/user/' + ${principal.id}">
+							<i class="far fa-user"></i>
+						</a>
+					</li>
+				</ul>
+			</nav>
+		</div>
+	</header>
+
+	<div class="main">
+		<section class="container">
+			<!--전체 리스트 시작-->
+			<article class="story-list" id="storyList">
+
+				<!--스토리 아이템-->
+				
+				<!--스토리 아이템 끝-->
+
+			</article>
+		</section>
+	</div>
+	
+	<footer>
+	<div class="container">
+		<ul>
+			<li><a href="#a">소개</a></li>
+			<li><a href="#a">블로그</a></li>
+			<li><a href="#a">채용 정보</a></li>
+			<li><a href="#a">도움말</a></li>
+			<li><a href="#a">API</a></li>
+			<li><a href="#a">개인정보처리방침</a></li>
+			<li><a href="#a">약관</a></li>
+			<li><a href="#a">인기 계정</a></li>
+			<li><a href="#a">해시태그</a></li>
+			<li><a href="#a">위치</a></li>
+		</ul>
+		<div class="copy">
+			<p>© 2022 Photogram from PARK JONG HEE</p>
+		</div>
+	</div>
+</footer>
+</body>
+<script th:src="@{/photogram/js/jquery.min.js}"></script>
+<script th:inline="javascript">
+
+	let principalId = $("#principalId").val();
+
+	let page = 0;
+	
+	$(document).ready(function(){
+		storyLoad(1);
+	});
+	
+	$(window).scroll( () => {
+	//	console.log("윈도우 scrollTop : ", $(window).scrollTop());
+	//	console.log("문서의 높이 : ", $(document).height());
+	//	console.log("윈도우 높이 : ", $(window).height());
+			
+		let checkNum = $(window).scrollTop() - ( $(document).height() - $(window).height() );
+			
+	//	console.log(checkNum);
+			
+		if(checkNum < 1 && checkNum > -1) {
+			page++;
+			storyLoad();
+		}
+			
+	});
+	
+	function storyLoad() {
+		$.ajax({
+			type: "get",
+			url: `/api/image?page=${page}`,
+			dataType: "json",
+			success: function(res) { 
+				
+				console.log(res.data)
+			
+				res.data.content.forEach((image) => {
+					let storyItem = getStoryItem(image);
+					
+					$("#storyList").append(storyItem);
+				});
+			},
+			error: function(error) {  
+				console.log("스토리 로딩 오류", error);
+			}
+		});
+	}
+	
+	function getStoryItem(image) {
+		let item = 
+			`<div class="story-list__item">` + 
+				`<div class="sl__item__header">` + 
+					`<div>` + 
+						`<img class="profile-image" src="/upload/${image.user.profileImageUrl}" onerror="this.src='/photogram/images/person.jpeg'">` + 
+					`</div>` + 
+					`<div>` +
+						`<div>${image.user.username}</div>` + 
+					`</div>` + 
+				`</div>` +
+				`<div class="sl__item__img">` +
+					`<img src="/upload/${image.postImageUrl}">` + 
+				`</div>` + 
+				`<div class="sl__item__contents">` +
+					`<div class="sl__item__contents__icon">` +
+						
+						`<button>`;
+						if(image.likeState) {
+							item += `<i class="fas fa-heart active" id="storyLikeIcon-${image.id}" onclick="toggleLike(${image.id})"></i>`;
+						} else {
+							item += `<i class="far fa-heart" id="storyLikeIcon-${image.id}" onclick="toggleLike(${image.id})"></i>`;
+						}
+			item +=
+						`</button>` + 
+					`</div>` + 
+					`<span class="like"><b id="storyLikeCount-${image.id}">${image.likeCount}</b>likes</span>` + 
+					`<div class="sl__item__contents__content">` +
+						`<p>${image.caption}</p>` + 
+					`</div>` +
+					`<div id="storyCommentList-${image.id}">`;
+						image.comments.forEach( (comment) => {
+							item += 
+								`<div class="sl__item__contents__comment" id="storyCommentItem-${image.id}">` +
+									`<p>` +
+										`<b>${comment.user.name} :</b> ${comment.content}` + 
+									`</p>`;
+									if(principalId == comment.user.id) {
+							item += 	`<button onclick="delectComment(${comment.id})"><i class="fas fa-times"></i></button>`;
+									}
+							item +=
+								`</div>` 
+							;
+						});
+			item +=
+					`</div>` +
+					`<div class="sl__item__input">` +
+					`<input type="text" placeholder="댓글 달기..." id="storyCommentInput-${image.id}" />` + 
+						`<button type="button" onclick="addComment(${image.id})">게시</button>` +
+					`</div>` + 
+				`</div>` + 
+			`</div>`;
+		
+		return item;
+	}
+	
+	function toggleLike(imageId) {
+	
+		let likeIcon = $(`#storyLikeIcon-${imageId}`);
+		
+		if(likeIcon.hasClass("far")) {  // 좋아요
+			$.ajax({
+				type: "post",
+				url: `/api/image/${imageId}/likes`,
+				dataType: "json",
+				success: function(res) { 
+					
+					let likeCountStr = $(`#storyLikeCount-${imageId}`).text();
+					let likeCount = Number(likeCountStr) + 1;
+					$(`#storyLikeCount-${imageId}`).text(likeCount);
+					
+					likeIcon.addClass("fas");
+					likeIcon.addClass("active");
+					likeIcon.removeClass("far");
+				},
+				error: function(error) {  
+					console.log("좋아요 API 오류", error);
+				}
+			});
+			
+		} else {  // 좋아요 취소
+			$.ajax({
+				type: "delete",
+				url: `/api/image/${imageId}/likes`,
+				dataType: "json",
+				success: function(res) { 
+					
+					let likeCountStr = $(`#storyLikeCount-${imageId}`).text();
+					let likeCount = Number(likeCountStr) - 1;
+					$(`#storyLikeCount-${imageId}`).text(likeCount);
+					
+					likeIcon.removeClass("fas");
+					likeIcon.removeClass("active");
+					likeIcon.addClass("far");
+				},
+				error: function(error) {  
+					console.log("좋아요 API 오류", error);
+				}
+			});
+		}
+	}
+	
+	function addComment(imageId) {
+		
+		let commentList = $(`#storyCommentList-${imageId}`);
+		let commentInput = $(`#storyCommentInput-${imageId}`);
+		
+		let data = {
+			imageId: imageId,
+			content: commentInput.val()
+		}
+
+		if(data.content === "") {
+			alert("댓글을 작성해주세요!");
+			return;
+		}
+
+		$.ajax({
+			type: "post",
+			url: `/api/comment`,
+			data: JSON.stringify(data),
+			contentType: "application/json; charset=utf-8",
+			dataType: "json",
+			success: function(res) { 
+				console.log("성공", res);
+				
+				let comment = res.data;
+				
+				console.log(comment);
+				
+				let content = 
+					`<div class="sl__item__contents__comment" id="storyCommentItem-${comment.id}">` + 
+						`<p>` +
+							`<b>${comment.user.name} :</b> ${comment.content}` +
+						`</p>` +
+						`<button onclick="delectComment(${comment.id})"><i class="fas fa-times"></i></button>` + 
+					`</div>`;
+			
+				commentList.prepend(content);
+				
+			},
+			error: function(error) {  
+				// POSTMAN으로 접근시 방어용.
+				alert(error.responseJSON.data.content);
+				
+				console.log("댓글 쓰기 API 오류", error);
+			}
+		});
+		
+		commentInput.val("");
+	}
+	
+	function delectComment(commentId) {
+		var url = `/api/comment/${commentId}`;
+		
+		$.ajax({
+			type: "DELETE",
+			url: url,
+			dataType: "json",  
+			success: function(result, status) {  // 1-2.httpStatus가 200번대 일때
+				console.log("댓글 삭제 성공", result);
+				$(`#storyCommentItem-${commentId}`).remove();
+			},
+			error: function(error, status) { // 1-3. httpstatus가 200번대가 아닐 때
+				console.log("댓글 삭제 실패", error);
+			
+			}
+		});
+	}
+	
+</script>
+
+</html>

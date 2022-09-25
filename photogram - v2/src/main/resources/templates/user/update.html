@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	  xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+<meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Photogram</title>
+    <!-- css -->
+    <link th:href="@{/photogram/css/style.css}"
+    		href="../photogram/css/style.css" rel="stylesheet">
+    <link th:href="@{/photogram/css/story.css}"
+    		href="../photogram/css/story.css" rel="stylesheet">
+    <link th:href="@{/photogram/css/popular.css}"
+    		href="../photogram/css/popular.css" rel="stylesheet">
+    <link th:href="@{/photogram/css/profile.css}"
+    		href="../photogram/css/profile.css" rel="stylesheet">
+    <link th:href="@{/photogram/css/upload.css}"
+    		href="../photogram/css/upload.css" rel="stylesheet">
+    <link th:href="@{/photogram/css/update.css}"
+    		href="../photogram/css/update.css" rel="stylesheet">
+    		
+	<!-- fontawesome  -->  
+    <link th:href="@{/photogram/fontawesome/css/all.min.css}"
+    		href="../photogram/fontawesome/css/all.min.css" rel="stylesheet">
+    
+	
+</head>
+<body>
+
+	<header class="header">
+		<div class="container">
+			<a href="/" class="logo">
+				<img src="/photogram/images/logo.jpg" alt="">
+			</a>
+			<nav class="navi">
+				<ul class="navi-list">
+					<li class="navi-item" sec:authorize="isAuthenticated()">
+						<a href="/image/story">
+							<i class="fas fa-home"></i>
+						</a>
+					</li>
+					<li class="navi-item" sec:authorize="hasAnyAuthority('ROLE_ADMIN','ROLE_USER')">
+						<a href="/image/popular">
+							<i class="far fa-compass"></i>
+						</a>
+					</li>
+					<li class="navi-item" sec:authorize="hasAnyAuthority('ROLE_ADMIN', 'ROLE_USER')">
+						<a th:href="'/user/' + ${principal.id}">
+							<i class="far fa-user"></i>
+						</a>
+					</li>
+				</ul>
+			</nav>
+		</div>
+	</header>
+	
+	<!--프로필 섹션-->
+	<section class="setting-container">
+		<!--프로필셋팅 아티클-->
+		<article class="setting__content">
+
+			<!--프로필셋팅 아이디영역-->
+			<div class="content-item__01">
+				<div class="item__img">
+					<img class="profile-image" src="" onerror="this.src='/photogram/images/person.jpeg'" id="userProfileImage" />
+				</div>
+				<div class="item__username">
+					<h2 th:text="${principal.username}"></h2>	
+				</div>
+			</div>
+			<!--프로필셋팅 아이디영역end-->
+
+			<!--프로필 수정-->
+			<form id="profileUpdate" th:onsubmit="'update(' + ${principal.id} + ', event);'">
+				<div class="content-item__02">
+					<div class="item__title">이름</div>
+					<div class="item__input">
+						<input type="text" name="name" placeholder="이름" th:value="${principal.name}" />
+					</div>
+				</div>
+				<div class="content-item__03">
+					<div class="item__title">아이디</div>
+					<div class="item__input">
+						<input type="text" name="username" placeholder="유저네임" th:value="${principal.username}" readonly="readonly" />
+					</div>
+				</div>
+				<div class="content-item__04">
+					<div class="item__title">패스워드</div>
+					<div class="item__input">
+						<input type="password" name="password" placeholder="패스워드" required="required" />
+					</div>
+				</div>
+				<div class="content-item__05">
+					<div class="item__title">웹사이트</div>
+					<div class="item__input">
+						<input type="text" name="website" placeholder="웹 사이트" th:value="${principal.website}"/>
+					</div>
+				</div>
+				<div class="content-item__06">
+					<div class="item__title">소개</div>
+					<div class="item__input">
+						<textarea id="bio" name="bio" rows="3" th:text="${principal.bio}"></textarea>
+					</div>
+				</div>
+				<div class="content-item__07">
+					<div class="item__title"></div>
+					<div class="item__input">
+						<span><b>개인정보</b></span> 
+						<span>
+							비즈니스나 반려동물 등에 사용된 계정인 경우에도 회원님의 개인 정보를 입력하세요. 공개 프로필에는 포함되지 않습니다. 
+						</span>
+					</div>
+				</div>
+				<div class="content-item__08">
+					<div class="item__title">이메일</div>
+					<div class="item__input">
+						<input type="text" name="email" placeholder="이메일" th:value="${principal.email}" readonly="readonly" />
+					</div>
+				</div>
+				<div class="content-item__09">
+					<div class="item__title">전회번호</div>
+					<div class="item__input">
+						<input type="text" name="phone" th:value="${principal.phone}" placeholder="전화번호"  />
+					</div>
+				</div>
+				<div class="content-item__10">
+					<div class="item__title">성별</div>
+					<div class="item__input">
+						<input type="text" name="gender" th:value="${principal.gender}"/>
+					</div>
+				</div>
+
+				<!--제출버튼-->
+				<div class="content-item__11">
+					<div class="item__title"></div>
+					<div class="item__input">
+						<button>제출</button>
+					</div>
+				</div>
+				<!--제출버튼end-->
+
+			</form>
+			<!--프로필수정 form end-->
+		</article>
+	</section>
+	
+	<footer>
+		<div class="container">
+			<ul>
+				<li><a href="#a">소개</a></li>
+				<li><a href="#a">블로그</a></li>
+				<li><a href="#a">채용 정보</a></li>
+				<li><a href="#a">도움말</a></li>
+				<li><a href="#a">API</a></li>
+				<li><a href="#a">개인정보처리방침</a></li>
+				<li><a href="#a">약관</a></li>
+				<li><a href="#a">인기 계정</a></li>
+				<li><a href="#a">해시태그</a></li>
+				<li><a href="#a">위치</a></li>
+			</ul>
+			<div class="copy">
+				<p>© 2022 Photogram from PARK JONG HEE</p>
+			</div>
+		</div>
+	</footer>
+	
+	<script th:src="@{/photogram/js/jquery.min.js}"></script>
+	<script th:inline="javascript">
+	/*<![CDATA[*/
+	
+		function update(userId, event) {
+			// 1-1. form 태그 action 막기
+			event.preventDefault();
+		
+			var url = `/api/user/${userId}`;
+			
+			let data = $("#profileUpdate").serialize();
+			
+			$.ajax({
+				type: "PUT",
+				url: url,
+				data: data,
+				contentType: "application/x-www-form-urlencoded; charset=utf-8",
+				dataType: "json",  
+				success: function(result, status) {  // 1-2.httpStatus가 200번대 일때
+					console.log("update 성공", result);
+				
+					location.href=`/user/${userId}`;
+				},
+				error: function(error, status) { // 1-3. httpstatus가 200번대가 아닐 때
+					console.log("update 실패", error);
+				
+					if(error.responseJSON.data == null) {
+						alert(error.responseJSON.message);
+					} else {
+						alert(JSON.stringify(error.responseJSON.data));	
+					}
+				}
+			});
+		}
+			
+	/*]]>*/
+	</script>
+</body>
+</html>
+
+<!-- 
+	* Security 사용자 정보 출력 in Thymeleaf
+	https://dev-gorany.tistory.com/139?category=901854 
+-->

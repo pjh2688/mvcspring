@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	  xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+<meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Photogram</title>
+    <!-- css -->
+    <link th:href="@{/photogram/css/style.css}"
+    		href="../photogram/css/style.css" rel="stylesheet">
+    <link th:href="@{/photogram/css/story.css}"
+    		href="../photogram/css/story.css" rel="stylesheet">
+    <link th:href="@{/photogram/css/popular.css}"
+    		href="../photogram/css/popular.css" rel="stylesheet">
+    <link th:href="@{/photogram/css/profile.css}"
+    		href="../photogram/css/profile.css" rel="stylesheet">
+    <link th:href="@{/photogram/css/upload.css}"
+    		href="../photogram/css/upload.css" rel="stylesheet">
+    <link th:href="@{/photogram/css/update.css}"
+    		href="../photogram/css/update.css" rel="stylesheet">
+    		
+	<!-- fontawesome  -->  
+    <link th:href="@{/photogram/fontawesome/css/all.min.css}"
+    		href="../photogram/fontawesome/css/all.min.css" rel="stylesheet">
+	
+</head>
+<body>
+	<header class="header">
+		<div class="container">
+			<a href="/" class="logo">
+				<img src="/photogram/images/logo.jpg" alt="">
+			</a>
+			<nav class="navi">
+				<ul class="navi-list">
+					<li class="navi-item" sec:authorize="isAuthenticated()">
+						<a href="/image/story">
+							<i class="fas fa-home"></i>
+						</a>
+					</li>
+					<li class="navi-item" sec:authorize="hasAnyAuthority('ROLE_ADMIN', 'ROLE_USER')">
+						<a href="/image/popular">
+							<i class="far fa-compass"></i>
+						</a>
+					</li>
+					<li class="navi-item" sec:authorize="hasAnyAuthority('ROLE_ADMIN', 'ROLE_USER')">
+						<a th:href="'/user/' + ${principal.id}">
+							<i class="far fa-user"></i>
+						</a>
+					</li>
+				</ul>
+			</nav>
+		</div>
+	</header>
+
+	<!--업로드 섹션-->
+	<div class="uploadContainer">
+		<section class="upload">
+			<!--사진업로드 로고-->
+            <div class="upload-top">
+            	<a href="home.html" class="">
+                	<img src="/photogram/images/logo.jpg" alt="">
+                </a>
+                <p>사진 업로드</p>
+            </div>
+            <!--사진업로드 로고 end-->
+                
+           <!--사진업로드 Form-->
+            <form class="upload-form" action="/image" method="post" enctype="multipart/form-data"> <!-- multipart/form-data : 여러가지 타입의 파일을 전송하기 위해서 사용 -->
+            	<input type="file" name="file" class="file" onchange="imageChoose(this)" />
+                <div class="upload-img">
+                	<img src="/photogram/images/person.jpeg" alt="" id="imageUploadPreview" />
+                </div>
+                    
+                <!--사진설명 + 업로드버튼-->
+                <div class="upload-form-detail">
+                	<input type="text" placeholder="사진설명" name="caption"/>
+                    <button class="cta blue">업로드</button>
+                </div>
+                <!--사진설명end-->
+                    
+        	</form>
+            <!--사진업로드 Form-->
+
+		</section>
+	</div>
+	
+	<!--게시물컨섹션-->
+	<section id="tab-content">
+		<!--게시물컨컨테이너-->
+		<div class="profileContainer">
+			<!--그냥 감싸는 div (지우면이미지커짐)-->
+			<div id="tab-1-content" class="tab-content-item show">
+				<!--게시물컨 그리드배열-->
+				<div class="tab-1-content-inner">
+
+				<!--아이템들-->
+			
+
+				<!--아이템들end-->
+				</div>
+			</div>
+		</div>
+	</section>
+	
+	<footer>
+		<div class="container">
+			<ul>
+				<li><a href="#a">소개</a></li>
+				<li><a href="#a">블로그</a></li>
+				<li><a href="#a">채용 정보</a></li>
+				<li><a href="#a">도움말</a></li>
+				<li><a href="#a">API</a></li>
+				<li><a href="#a">개인정보처리방침</a></li>
+				<li><a href="#a">약관</a></li>
+				<li><a href="#a">인기 계정</a></li>
+				<li><a href="#a">해시태그</a></li>
+				<li><a href="#a">위치</a></li>
+			</ul>
+			<div class="copy">
+				<p>© 2022 Photogram from PARK JONG HEE</p>
+			</div>
+		</div>
+	</footer>
+	
+	<!--로그아웃, 회원정보변경 모달-->
+	<div class="modal-info" th:onclick="modalInfo()">
+		<div class="modal">
+			<button th:onclick="location.href='/user/${dto.user.id}/update'">회원정보 변경</button>
+			<button th:onclick="location.href='/logout'">로그아웃</button>
+			<button th:onclick="closePopup('.modal-info')">취소</button>
+		</div>
+	</div>
+	<!--로그아웃, 회원정보변경 모달 end-->
+</body>
+<script th:src="@{/photogram/js/jquery.min.js}"></script>
+
+<script th:inline="javascript">
+	/*<![CDATA[*/
+		
+	// 1-1. 스토리 이미지 업로드를 위한 사진 선택 로직
+	function imageChoose(obj) {
+		let f = obj.files[0];
+		if(!f.type.match("image.*")) {
+			alert("이미지를 등록해야 합니다.");
+			
+			// 1-2. 이미지 등록 실패시 file input value도 초기화하고 default 이미지를 다시 보여준다.
+			$(".file").val("");
+			$("#imageUploadPreview").attr("src", "/photogram/images/person.jpeg");
+			
+			return;
+		}
+		
+		let reader = new FileReader();
+		reader.onload = (e) => {
+			$("#imageUploadPreview").attr("src", e.target.result);
+		}
+		reader.readAsDataURL(f);  // 1-3. 이 코드 실행시 reader.onload 실행
+		
+	}
+
+	/*]]>*/	
+</script>
+</html>
