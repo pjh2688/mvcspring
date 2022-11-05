@@ -1,0 +1,68 @@
+plugins {
+	id 'org.springframework.boot' version '2.7.4'
+	id 'io.spring.dependency-management' version '1.0.14.RELEASE'
+	id 'java'
+	id 'war'
+}
+
+group = 'com.tistory'
+version = '0.0.1-SNAPSHOT'
+sourceCompatibility = '1.8'
+
+repositories {
+	mavenCentral()
+}
+
+dependencies {
+	/* 1. web */
+	implementation 'org.springframework.boot:spring-boot-starter-web'
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	
+	/* 2. 배포시 내장톰캣을 사용하지 않을거라는 dependency */
+	providedRuntime 'org.springframework.boot:spring-boot-starter-tomcat'
+	
+	/* 3. lombok */
+	compileOnly 'org.projectlombok:lombok'
+	annotationProcessor 'org.projectlombok:lombok'
+	
+	/* 4. devtools */
+	runtimeOnly 'org.springframework.boot:spring-boot-devtools'
+	
+	/* 5. mybatis */
+	implementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter:2.1.3'
+	
+	/* 6. MariaDB */
+	runtimeOnly 'org.mariadb.jdbc:mariadb-java-client' 
+	
+	/* 7. JDBC */
+	implementation 'org.springframework.boot:spring-boot-starter-jdbc'
+	
+	/* 8. security */
+	implementation 'org.springframework.boot:spring-boot-starter-security'
+	
+	/* 9. AOP */
+	implementation 'org.springframework.boot:spring-boot-starter-aop'
+	
+	/* 10. validation(Bean Validation) */
+	implementation 'org.springframework.boot:spring-boot-starter-validation'
+	
+	/* 11. mail */
+	implementation 'org.springframework.boot:spring-boot-starter-mail'
+	
+	/* 12. JPA */ 
+	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+	
+	/* 13. mustache */
+	implementation 'org.springframework.boot:spring-boot-starter-mustache'
+	
+	/* 14. QLRM */
+	implementation group: 'org.qlrm', name: 'qlrm', version: '3.0.4'
+	
+	/* 15. 파일업로드 - Apache Commons File Upload */
+	implementation group: 'commons-fileupload', name: 'commons-fileupload', version: '1.4'
+	
+}
+
+tasks.named('test') {
+	useJUnitPlatform()
+}

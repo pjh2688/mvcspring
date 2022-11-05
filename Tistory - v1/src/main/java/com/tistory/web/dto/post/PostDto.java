@@ -1,0 +1,26 @@
+package com.tistory.web.dto.post;
+
+import java.util.List;
+
+import org.springframework.data.domain.Page;
+
+import com.tistory.domain.category.Category;
+import com.tistory.domain.post.Post;
+
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@AllArgsConstructor
+@NoArgsConstructor
+@Data
+public class PostDto {
+
+	private Page<Post> posts;
+    private List<Category> categorys;
+    private Long userId;
+    private Integer prev;
+    private Integer next;
+    private List<Integer> pageNumbers;
+    private Long totalCount;
+}

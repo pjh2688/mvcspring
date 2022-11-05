@@ -1,0 +1,73 @@
+{{>/layout/main-header}}
+
+<div class="container">
+{{#mainPostDto}}
+	<input type="hidden" id="post" value="{{mainPostDto.posts.content}}">
+{{/mainPostDto}}
+
+	<div class="my_main_list">
+		<!-- 아이템 시작 -->
+		{{#mainPostDto.posts.content}}
+        <div class="my_main_item">
+        	
+            <a href="/user/{{user.id}}/post/{{id}}" class="my_atag_none">
+                <div class="my_main_item_thumnail">
+                {{#thumnail}}
+                	<img src="/thumnail/{{thumnail}}" width="100%" height="100%">
+             	{{/thumnail}}
+             
+             	{{^thumnail}}
+             		<img src="/tistory/images/dog.jpg" width="100%" height="100%">
+             	{{/thumnail}}
+                </div>
+                <div class="my_main_content my_p_sm_1">
+                    <div class="my_main_item_title">
+                        <h3>{{title}}</h3>
+                    </div>
+                    <div class="my_main_item_summary my_mb_sm_1 my_text_two_line">
+                   
+                    </div>
+                    <div class="my_main_item_date my_mb_sm_1">
+                        {{createDate}}
+                    </div>
+            	</div>
+            </a>
+            <a href="/user/{{user.id}}/post" class="my_atag_none">
+                <div class="my_main_item_username">
+                    <span>by </span>
+                    <b>{{user.username}}</b>
+                </div>
+            </a>     
+        </div>
+        {{/mainPostDto.posts.content}}
+        
+        {{^mainPostDto}}
+        <div class="my_main_item">
+        	<p>로그인을 해주세요.</p>
+        </div>
+        {{/mainPostDto}}
+        <!-- 아이템 끝 -->
+
+	</div>
+</div>
+
+<script>
+	
+	$(document).ready(function(){
+		var post = $("#post").val();
+		console.log(post);
+		
+	});
+	
+	// 2022-10-17 -> 페이징 성공
+	function movePage(page) {
+		var categoryId = $("#categoryId").val();
+		var userId = $("#userId").val();
+		var page = page - 1;
+		
+		location.href = "/user/" + userId + "/post?page=" + page + "&categoryId=" + categoryId;
+	
+	}
+</script>
+
+{{>/layout/footer}}
