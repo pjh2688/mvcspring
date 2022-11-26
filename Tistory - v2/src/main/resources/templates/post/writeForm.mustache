@@ -1,0 +1,273 @@
+{{>/layout/main-header}}
+
+<style>
+    .ql-editor {
+        min-height: 40vh;
+    }
+</style>
+
+<div class="container">
+	<input id="postId" type="hidden" value="" />
+    <input id="pageOwnerId" type="hidden" value="" />
+    <input id="my-loveId" type="hidden" value=""/>
+{{#postDetailRespDto}}
+    <input id="content" type="hidden" value="{{postDetailRespDto.post.content}}"/>
+    <input id="post" type="hidden" value="{{postDetailRespDto.post}}"/>
+    <input id="principalId" type="hidden" value="{{principal.id}}" />
+    <input id="postId" type="hidden" value="{{postDetailRespDto.post.id}}"/>
+    <input id="category_id" type="hidden" value="{{postDetailRespDto.post.category.id}}"/>
+{{/postDetailRespDto}}
+
+{{^postDetailRespDto}}
+    <form id="postWriteForm" method="post" enctype="multipart/form-data" onsubmit="return getQuill()">
+{{/postDetailRespDto}}
+
+{{#postDetailRespDto}}
+	<form id="postUpdateForm" onsubmit="return getQuill()">
+{{/postDetailRespDto}}
+        <div class="form-group">
+        	
+            <select class="form-control" id="categoryId" name="categoryId">    
+            {{#categories}}
+                <option value="{{id}}">{{title}}</option>
+            {{/categories}}
+            </select>
+           
+        </div>
+        <br/>
+        {{^postDetailRespDto}}
+        <input type="text" id="title" name="title" class="form-control" placeholder="Enter Title" >
+		{{/postDetailRespDto}}
+		
+		{{#postDetailRespDto}}
+        <input type="text" id="title" name="title" class="form-control" value="{{postDetailRespDto.post.title}}" placeholder="Enter Title(수정)" >
+		{{/postDetailRespDto}}
+		
+        <div id="toolbar-container">
+            <span class="ql-formats">
+                <select class="ql-font"></select>
+                <select class="ql-size"></select>
+            </span>
+            <span class="ql-formats">
+                <button class="ql-bold"></button>
+                <button class="ql-italic"></button>
+                <button class="ql-underline"></button>
+                <button class="ql-strike"></button>
+            </span>
+            <span class="ql-formats">
+                <select class="ql-color"></select>
+                <select class="ql-background"></select>
+            </span>
+            <span class="ql-formats">
+                <button class="ql-script" value="sub"></button>
+                <button class="ql-script" value="super"></button>
+            </span>
+            <span class="ql-formats">
+                <button class="ql-header" value="1"></button>
+                <button class="ql-header" value="2"></button>
+                <button class="ql-blockquote"></button>
+            </span>
+            <span class="ql-formats">
+                <button class="ql-list" value="ordered"></button>
+                <button class="ql-list" value="bullet"></button>
+                <button class="ql-indent" value="-1"></button>
+                <button class="ql-indent" value="+1"></button>
+            </span>
+            <span class="ql-formats">
+                <button class="ql-direction" value="rtl"></button>
+                <select class="ql-align"></select>
+            </span>
+            <span class="ql-formats">
+                <button class="ql-link"></button>
+                <button class="ql-image"></button>
+                <button class="ql-video"></button>
+            </span>
+            <span class="ql-formats">
+                <button class="ql-clean"></button>
+            </span>
+        </div>
+
+        <div id="editor-container"></div>
+   
+        <textarea name="content" id="content" class="my_hidden"></textarea>
+
+		<!-- 2022-10-23 -> 글수정 화면에 썸네일 사진 원본파일명 가지고오는거 까지 성공 -->
+		{{^postDetailRespDto.post}}
+        <div class="form-control d-flex justify-content-end">
+       
+            <div>섬네일 사진 등록 : <input type="file" id="thumnailFile" name="thumnailFile"></div>
+        
+        </div>
+        {{/postDetailRespDto.post}}
+        
+        
+    {{^postDetailRespDto}}
+        <button class="my_active_btn" onClick="writePost({{principal.id}}, event)">쓰기</button>
+   	
+   	{{/postDetailRespDto}}
+   	
+   	{{#postDetailRespDto}}
+   		<button class="my_active_btn" onClick="updatePost({{post.id}}, {{principal.id}}, event)">수정</button>
+   	
+   	{{/postDetailRespDto}}
+    </form>
+    <br />
+
+</div>
+
+<script>
+	
+	var data = $("#content").val();
+	
+	var post = $("#post").val();
+	
+	var category_id = $("#category_id").val();
+	
+	
+	var principalId = $("#principalId").val();
+	
+	var postId = $("#postId").val();
+	
+	$(document).ready(function(){
+		console.log(principalId);
+		<!-- 1-1. 글 수정시 categoryId 값으로 selected된 상태로 가져오기 위해 추가 -->
+		$("#categoryId option[value=" + category_id + "]").prop('selected', "selected").change();
+		
+		
+	});
+	
+	function getQuill() {
+		
+        let quillContent = $("#editor-container .ql-editor").html();
+    	
+    	
+        $("#content").html(quillContent);
+        
+        return true;
+    }
+
+	if(data == null) {
+	
+    	var quill = new Quill('#editor-container', {
+        	modules: {
+            	formula: true,
+            	syntax: true,
+            	toolbar: '#toolbar-container'
+        	},
+        	placeholder: '게시물을 작성해주세요.',
+        	theme: 'snow'
+    	});
+    } else {
+    	
+    	var quill = new Quill('#editor-container', {
+        	modules: {
+            	formula: true,
+            	syntax: true,
+            	toolbar: '#toolbar-container'
+        	},
+        	theme: 'snow'
+    	});
+    	
+    	quill.setContents([
+  			{ insert: data.replace(/<[^>]*>?/g, '') }
+		]);
+    }
+    
+    function writePost(principalId, event) {
+    	event.preventDefault();
+    	
+    	let categoryId = document.getElementById("categoryId").value; 
+		let title = document.getElementById("title").value; 
+		let content = document.getElementsByClassName("ql-editor")[0];
+		let thumnailFile = $("#thumnailFile")[0].files[0];
+
+		var formData = new FormData();
+		
+		formData.append("categoryId", categoryId);
+		formData.append("title", title);
+		formData.append("content", content.innerHTML);
+		formData.append("thumnailFile", thumnailFile);
+ 
+    	
+    	var url = `/api/user/${principalId}/post/write`;
+    	
+    	$.ajax({
+			type: "POST",
+			url: url,
+			data: formData,
+			contentType: false,
+			processData: false,
+			enctype: 'multipart/form-data',  
+			success: function(result, status) {  // 1-2.httpStatus가 200번대 일때
+				console.log("write 성공", result);
+				location.href=`/user/${principalId}/post`;
+			},
+			error: function(error, status) { // 1-3. httpstatus가 200번대가 아닐 때
+				console.log("write 실패", error);
+				
+				if(error.responseJSON.data == null) {
+					alert(error.responseJSON.message);
+				} else if(error.responseJSON.message == "유효성 검사 실패"){
+				
+					if(error.responseJSON.data.title) {
+						alert("포스팅 제목은 " + error.responseJSON.data.title);
+					}
+					
+					if(error.responseJSON.data.thumnailFile) {
+						alert(error.responseJSON.data.thumnailFile);
+					}
+						
+				} else {
+					alert(error.responseJSON.data);
+				}
+				
+			
+			}
+		});
+    	
+    }
+    
+    function updatePost(postId, principalId, event) {
+		event.preventDefault();
+		
+		let categoryId = document.getElementById("categoryId").value; 
+		let title = document.getElementById("title").value; 
+		let content = document.getElementsByClassName("ql-editor")[0];
+		
+		var formData = {
+			categoryId : categoryId,
+			title : title,
+			content : content.innerText
+		}
+		
+		var url = `/api/user/${principalId}/post/${postId}/update`;
+		
+		$.ajax({
+			type: "PUT",
+			url: url,
+			data: formData,
+			contentType: "application/x-www-form-urlencoded; charset=utf-8",
+			dataType: "json",  
+			success: function(result, status) {  // 1-2.httpStatus가 200번대 일때
+				console.log("update 성공", result);
+				
+				location.href=`/user/${principalId}/post/${postId}`;
+			},
+			error: function(error, status) { // 1-3. httpstatus가 200번대가 아닐 때
+				console.log("update 실패", error);
+				
+				if(error.responseJSON.data == null) {
+					alert(error.responseJSON.message);
+				} else {
+					alert(JSON.stringify(error.responseJSON.data));	
+				}
+			}
+		});
+		
+
+	}
+   
+</script>
+
+
+{{>/layout/footer}}

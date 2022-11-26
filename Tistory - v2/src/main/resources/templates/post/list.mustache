@@ -1,0 +1,97 @@
+{{>/layout/post-header}}
+
+<div class="container">
+	<input type="hidden" id="userId" value="{{postRespDto.userId}}">
+	<input type="hidden" id="post" value="{{postRespDto.posts.content}}">
+	{{#categoryId}}
+		<input type="hidden" id="categoryId" value="{{categoryId}}">
+	{{/categoryId}}
+	{{^categoryId}}
+		<input type="hidden" id="categoryId" value="">
+	{{/categoryId}}
+	
+    <div class="d-flex justify-content-end my_mb_sm_1">
+		
+		{{#postRespDto}}
+        <a href="/user/{{userId}}/post/write" class="my_atag_none">
+            <div class="my_icon_rounded_btn d-flex justify-content-center align-items-center">
+            	<i class="fa-solid fa-pencil"></i>
+            </div>
+        </a>
+        {{/postRespDto}}
+    </div>
+
+    <div class="my_post_list">
+		<!-- 2022-10-15 -> 데이터 가져와서 뿌리는거 까지 성공 -->
+		{{#postRespDto.posts.content}}
+        <div class="my_post_list_item">
+            <div class="my_post_list_item_left">
+             	
+             {{#thumnail}}
+                <img src="/thumnail/{{thumnail}}" width="150" height="150">
+             {{/thumnail}}
+             
+             {{^thumnail}}
+             	<img src="/tistory/images/dog.jpg" width="150" height="150">
+             {{/thumnail}}
+            	<!-- <div class="my_fakeimg"></div> -->
+            
+            </div>
+            <div class="my_post_list_item_right my_ellipsis">
+                <div class="my_text_title my_ellipsis">{{title}}</div>
+                <div class="my_text_body_sm">{{createDate}}</div>
+                <div class="my_mt_md_1">
+     
+                    <a href="/user/{{user.id}}/post/{{id}}" class="my_success_btn">Read More</a>
+                  
+                </div>
+            </div>
+        </div>
+		{{/postRespDto.posts.content}}
+		
+        <div class="my_paging d-flex justify-content-center align-items-center my_mb_lg_1">
+			
+			{{#postRespDto.isPrev}}
+            <a class="my_atag_none my_mr_sm_1" href="/user/{{postRespDto.userId}}/post?page={{postRespDto.prev}}">
+                <i class="fa-solid fa-angle-left"></i>
+            </a>
+			{{/postRespDto.isPrev}}
+			
+			{{#postRespDto.pageNumbers}}
+            <a class="my_atag_none" onclick="movePage({{.}});">
+                <div class="my_paging_number_box my_mr_sm_1">
+                   {{.}}
+                </div>
+            </a>
+			{{/postRespDto.pageNumbers}}
+			
+			{{#postRespDto.isNext}}
+            <a class="my_atag_none my_ml_sm_1" href="/user/{{postRespDto.userId}}/post?page={{postRespDto.next}}">
+                <i class="fa-solid fa-angle-right"></i>
+            </a>
+			{{/postRespDto.isNext}}
+        </div>
+       
+    </div>
+
+</div>
+<script>
+	
+	$(document).ready(function(){
+		var post = $("#post").val();
+		console.log(post);
+		
+	});
+	
+	// 2022-10-17 -> 페이징 성공
+	function movePage(page) {
+		var categoryId = $("#categoryId").val();
+		var userId = $("#userId").val();
+		var page = page - 1;
+		
+		location.href = "/user/" + userId + "/post?page=" + page + "&categoryId=" + categoryId;
+	
+	}
+</script>
+
+{{>/layout/footer}}

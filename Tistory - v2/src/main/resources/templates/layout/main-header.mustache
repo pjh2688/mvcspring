@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>티스토리</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    
+    <!-- bootstrap.min.css -->
+    <link rel="stylesheet" href="/tistory/css/bootstrap.min.css">
+    
+    <!-- fontawesome -->
+    <link rel="stylesheet" href="/tistory/fontawesome/css/all.css">
+        
+    <!-- jquery.slim.min.js -->
+    <script src="/tistory/js/jquery.slim.min.js"></script>
+    
+    <!-- popper.min.js -->
+    <script src="/tistory/js/popper.min.js"></script>
+    
+    <!-- bootstrap.bundle.min.js  -->
+    <script src="/tistory/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- 6b3377d2bb.js -->
+<!--<script src="/tistory/js/6b3377d2bb.js" crossorigin="anonymous"></script> -->
+
+    <!-- drawer.css -->
+    <link rel="stylesheet" href="/tistory/css/drawer.min.css">
+    
+    <!-- jquery & iScroll -->
+    <script src="/tistory/js/iscroll.min.js"></script>
+
+    <!-- quill.snow.css -->
+    <link rel="stylesheet" href="/tistory/css/quill.snow.css" >
+    
+    <!-- styles.css -->
+    <link rel="stylesheet" href="/tistory/css/styles.css">
+    
+    <!-- JQuery.min.js -->
+    <script src="/tistory/js/jquery.min.js"></script>
+    
+    <!-- katex.css -->
+    <link rel="stylesheet" href="/tistory/css/katex.css">
+    
+    <!-- katex.js -->
+    <script src="/tistory/js/katex.js"></script>
+    
+    <!-- default.min.css -->
+    <link rel="stylesheet" href="/tistory/css/default.min.css">
+    
+    <!-- highlight.min.js -->
+    <script src="/tistory/js/highlight.min.js"></script>
+    
+    <!-- quill.js -->
+    <script src="/tistory/js/quill.js"></script>
+    
+    <!-- jquery-serialize-object.js -->
+    <script src="/tistory/js/jquery-serialize-object.js"></script>
+    <!-- 2022-11-22 -> active부터 다시 -->
+     <style>
+    	a {
+    		color: black;
+    	}
+    	a:hover {
+    		text-decoration: none;
+    		
+    		
+    	}
+    	
+    </style>
+    
+</head>
+
+<body>
+	{{#principal}}
+    <input type="hidden" id="principalId" value="{{principal.id}}" />
+ 	{{/principal}}
+
+    <nav class="navbar navbar-expand-sm my_navbar">
+
+        <a href="/">
+            <svg class="my_sm_1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 408.4 408.4">
+                <g>
+                    <circle class="cls-1" cx="58.18" cy="58.18" r="58.18" />
+                    <circle class="cls-1" cx="204.2" cy="58.18" r="58.18" />
+                    <circle class="cls-1" cx="204.2" cy="204.2" r="58.18" />
+                    <circle class="cls-1" cx="204.2" cy="350.22" r="58.18" />
+                    <circle class="cls-1" cx="350.22" cy="58.18" r="58.18" />
+                </g>
+            </svg>
+        </a>
+        
+        <div class="my_navbar_title">
+            <a href="/">티스토리</a>
+        </div>
+
+      	{{#principal}}
+        <div class="dropdown dropleft">
+        	
+        	<div data-toggle="dropdown">
+               
+            {{#principal.profileImageUrl}}
+               <img src="/upload/{{principal.profileImageUrl}}" class="my_profile_rounded_img_btn_lg" id="userProfileImage" style="width: 50px; height: 50px;">
+            {{/principal.profileImageUrl}}
+            
+            {{^principal.profileImageUrl}}
+                <img src="/tistory/images/dog.jpg" class="my_profile_rounded_img_btn_lg" id="userProfileImage" style="width: 50px; height: 50px;">
+            {{/principal.profileImageUrl}}
+               
+            </div>
+        
+
+            <div class="dropdown-menu">
+                <a class="dropdown-item" href="/user/{{principal.id}}/post">내 블로그</a>
+                <a class="dropdown-item" href="/user/{{principal.id}}">계정관리</a>
+            {{#isAdmin}}
+                <a class="dropdown-item" href="/category/write">카테고리관리</a>
+            {{/isAdmin}}
+                <a class="dropdown-item" href="/logout">로그아웃</a>
+            </div>
+        </div>
+		{{/principal}}
+		
+      	{{^principal}}
+        <div>
+            <a class="my_main_start_btn" href="/login-form">시작하기</a>
+        </div>
+       	{{/principal}}
+    </nav>
+    <br>
+    <br>

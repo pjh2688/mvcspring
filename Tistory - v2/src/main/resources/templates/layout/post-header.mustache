@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>티스토리</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- bootstrap.min.css -->
+    <link rel="stylesheet" href="/tistory/css/bootstrap.min.css">
+    
+    <!-- fontawesome -->
+    <link rel="stylesheet" href="/tistory/fontawesome/css/all.css">
+        
+    <!-- jquery.slim.min.js -->
+    <script src="/tistory/js/jquery.slim.min.js"></script>
+    
+    <!-- popper.min.js -->
+    <script src="/tistory/js/popper.min.js"></script>
+    
+    <!-- bootstrap.bundle.min.js  -->
+    <script src="/tistory/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- 6b3377d2bb.js -->
+<!--<script src="/tistory/js/6b3377d2bb.js" crossorigin="anonymous"></script> -->
+
+    <!-- drawer.css -->
+    <link rel="stylesheet" href="/tistory/css/drawer.min.css">
+    
+    <!-- jquery & iScroll -->
+    <script src="/tistory/js/iscroll.min.js"></script>
+
+    <!-- quill.snow.css -->
+    <link rel="stylesheet" href="/tistory/css/quill.snow.css" >
+    
+    <!-- styles.css -->
+    <link rel="stylesheet" href="/tistory/css/styles.css">
+    
+    <!-- JQuery.min.js -->
+    <script src="/tistory/js/jquery.min.js"></script>
+    
+    <!-- katex.css -->
+    <link rel="stylesheet" href="/tistory/css/katex.css">
+    
+    <!-- katex.js -->
+    <script src="/tistory/js/katex.js"></script>
+    
+    <!-- default.min.css -->
+    <link rel="stylesheet" href="/tistory/css/default.min.css">
+    
+    <!-- highlight.min.js -->
+    <script src="/tistory/js/highlight.min.js"></script>
+    
+    <!-- quill.js -->
+    <script src="/tistory/js/quill.js"></script>
+    
+    <!-- jquery-serialize-object.js -->
+    <script src="/tistory/js/jquery-serialize-object.js"></script>
+    
+    <style>
+    	a {
+    		color: black;
+    	}
+    	a:hover {
+    		text-decoration: none;
+    		
+    	}
+    </style>
+</head>
+
+<body class="drawer drawer--left">
+	
+	{{#principal}}
+    <input type="hidden" id="principalId" value="{{principal.id}}" />
+ 	{{/principal}}
+ 
+ 	
+    <nav class="drawer-nav my_nav_slider" role="navigation">
+    	
+        <ul class="drawer-menu">
+            <li><a class="drawer-brand" href="/">Home</a></li>
+        {{#postRespDto.categorys}}
+            <li><a class="drawer-menu-item" href="/user/{{user.id}}/post?categoryId={{id}}">{{title}}</a></li>
+       	{{/postRespDto.categorys}}
+       	
+       	{{#categories}}
+            <li><a class="drawer-menu-item" href="/user/{{user.id}}/post?categoryId={{id}}">{{title}}</a></li>
+       	{{/categories}}
+        </ul>
+        
+		{{#postRespDto}}
+        <div class="my_nav_slider_visit">
+            <div>방문자수 : {{totalCount}}</div>
+            <i class="fa-solid fa-camera"></i>
+        </div>
+       {{/postRespDto}}
+    </nav>
+	
+    <nav class="navbar navbar-expand-sm my_navbar">
+
+        <!-- Links -->
+        <ul class="navbar-nav">
+            <li class="nav-item">
+                <div class="my_icon_btn drawer-toggle">
+                    <i class="fa-solid fa-bars fa-2x"></i>
+                </div>
+            </li>
+        </ul>
+		<!-- 다음에 와서 a태그 기본기능 빼기 -->
+        <div class="my_navbar_title">
+            <a href="/">티스토리</a>
+        </div>
+
+        <!-- Navbar text-->
+        <ul class="navbar-nav">
+        	{{#principal}}
+            <div class="dropdown dropleft">
+                <div data-toggle="dropdown" class="d-flex justify-content-end">
+                    
+                {{#principal.profileImageUrl}}
+                	<img src="/upload/{{principal.profileImageUrl}}" class="my_profile_rounded_img_btn_lg" id="userProfileImage" style="width: 50px; height: 50px;">
+            	{{/principal.profileImageUrl}}
+            
+            	{{^principal.profileImageUrl}}
+                	<img src="/tistory/images/dog.jpg" class="my_profile_rounded_img_btn_lg" id="userProfileImage"  style="width: 50px; height: 50px;">
+            	{{/principal.profileImageUrl}}
+            	
+                </div>
+                <div class="dropdown-menu">
+                	<a class="dropdown-item" href="/user/{{principal.id}}/post">내 블로그</a>
+                	<a class="dropdown-item" href="/user/{{principal.id}}">계정관리</a>
+                {{#isAdmin}}
+                	<a class="dropdown-item" href="/category/write">카테고리관리</a>
+                {{/isAdmin}}
+                	<a class="dropdown-item" href="/logout">로그아웃</a>
+            	</div>
+            </div>
+			{{/principal}}
+			
+			{{^principal}}
+            <div>
+                <a class="my_main_start_btn" href="/login-form">시작하기</a>
+            </div>
+            {{/principal}}
+
+        </ul>
+
+    </nav>
+    <br>

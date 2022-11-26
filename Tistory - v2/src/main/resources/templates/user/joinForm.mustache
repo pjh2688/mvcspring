@@ -1,0 +1,88 @@
+{{>/layout/main-header}}
+
+<div class="container">
+    <div class="my_auth_box">
+        <div class="my_auth_form_box">
+            <div class="my_auth_form_box_title">TStory</div>
+            <div class="my_error_box my_hidden">
+
+            </div>
+            <form action="/join" method="post">
+                <input id="username" class="my_auth_form_box_input" type="text" name="username" placeholder="유저네임"
+                    maxlength="20" required />
+                <input id="password" class="my_auth_form_box_input" type="password" name="password" placeholder="비밀번호"
+                    maxlength="20" required />
+                <input id="same-password" class="my_auth_form_box_input" type="password" name="same-password" placeholder="비밀번호 확인"
+                    maxlength="20" required />
+                <input class="my_auth_form_box_input" type="email" name="email" placeholder="이메일" maxlength="60"
+                    required />
+                <button type="submit" class="my_secondary_btn">회원가입</button>
+            </form>
+            <div class="my_auth_form_box_link">
+                <div><a href="/login-form">로그인</a></div>
+                <div><a href="/user/password-reset-form">비밀번호 찾기</a></div>
+            </div>
+        </div>
+    </div>
+    <br />
+</div>
+<script>
+
+
+	$(document).ready(function(){
+		
+		
+	});
+	
+	$("#username").focusout(() => {
+    	usernameSameCheck();
+	});
+
+	$("#same-password").focusout(() => {
+    	passwordSameCheck();
+	});
+
+	function usernameSameCheck() {
+    	let username = $("#username").val();
+
+    	var url = `/api/user/username-same-check?username=${username}`;
+   
+    	$.ajax({
+			type: "GET",
+			url: url,
+			contentType: "application/x-www-form-urlencoded; charset=utf-8",
+			dataType: "json",  
+			success: function(result, status) {  // 1-2.httpStatus가 200번대 일때
+				if(result.data == false) {
+					alert("중복된 아이디 입니다.");
+					$("input[name=username]").val('');
+					$("#username").focus();
+					return;
+				}
+			
+			},
+			error: function(error, status) { // 1-3. httpstatus가 200번대가 아닐 때
+				console.log("아이디 중복 체크", error);
+			}
+		});
+   
+	}
+
+	function passwordSameCheck() {
+    	let password = $("#password").val();
+    	let samePassword = $("#same-password").val();
+
+    	if (password !== samePassword) {
+    		alert("비밀번호가 일치하지 않습니다.");
+    		$("#password").val("");
+    		$("#same-password").val("");
+    	
+    		$("#password").focus();
+        	return false;
+    	}
+	}
+
+
+</script>
+
+{{>/layout/footer}}
