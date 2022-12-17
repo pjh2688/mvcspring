@@ -1,0 +1,275 @@
+{{>/layout/post-header}}
+<style>
+	.table {
+		text-align: center;
+	}
+	.pagination {
+		padding-top: 5px;
+		justify-content: center;
+	}
+	.my_atag_none_1 {
+		outline: 1px solid rgb(185, 185, 185);
+    	padding: 0 5px;
+	}
+	#adv-search {
+		justify-content: center;
+	}
+	#searchForm {
+		width: 300px;
+	}
+</style>
+
+<div class="container">
+	
+	<!-- /* 검색 영역 */ -->
+	<div id="adv-search" class="input-group">
+		<form id="searchForm" onsubmit="return false;">
+			<select id="searchType" class="form-control">
+				<option value="">전체</option>
+				<option value="title">제목</option>
+				<option value="content">내용</option>
+				<option value="writer">작성자</option>
+			</select>
+			<input type="text" id="keyword" class="form-control" placeholder="키워드를 입력해주세요."/>
+		</form>
+		<button type="button" class="btn btn-primary" onclick="findAll(1);">
+			<span aria-hidden="true" class="glyphicon glyphicon-search">검색</span>
+		</button>
+	</div>
+	
+    <div class="d-flex justify-content-end my_mb_sm_1">
+    	<a href="/user/boards/write" class="my_atag_none">
+            <div class="my_icon_rounded_btn d-flex justify-content-center align-items-center">
+            	<i class="fa-solid fa-pencil"></i>
+         	</div>
+    	</a>	 
+		
+    </div>
+	<div class="content">
+		
+		<!-- /* 게시글 영역 */ -->
+		<div class="table-responsive clearfix">
+			<table class="table table-hover">
+				<thead>
+					<tr>
+						<th>번호</th>
+						<th>제목</th>
+						<th>작성자</th>
+						<th>등록일</th>
+						<th>조회수</th>
+					</tr>
+				</thead>
+									
+				<!-- /* 게시글 리스트 rending 영역 */ -->
+				<tbody id="list">
+				</tbody>
+			</table>
+								
+		</div>
+		<!-- /* 페이지네이션 rending 영역 */ -->
+		<nav class="text-center" aria-label="Page Navigation">
+			<ul class="pagination">
+								
+			</ul>
+		</nav>
+		
+	</div>
+</div>
+<script>
+
+	/**
+	  * 1. 페이지 로딩 시점에 실행되는 함수.		
+	  */
+	window.onload = () => {
+		setQueryStringParams();
+		findAll();
+		addEnterSearchEvent();
+			
+	}
+	
+	function findAll() {
+		
+		$.ajax({
+			url: "/api/boards",
+			type: "GET",
+			dataType: "json",
+			contentType: "application/json; charset=UTF-8",
+			success: function(res) {
+				console.log(res.data.length);
+				
+						
+				if(!res.data.length) {
+					html = '<td colspan="5">등록된 게시글이 없습니다.</td>';
+				} else {
+					for(var i = 0; i < res.data.length; i++) {
+						html += `
+							<tr>
+								<td>${res.data.length - i}</td>
+								<td class="text-left">
+									<a href="/board/view/${res.data[i].id}">${res.data[i].title}</a>
+								</td>
+								<td>${res.data[i].writer}</td>
+								<td>${moment(res.data[i].createdDate).format('YYYY-MM-DD HH:mm:ss')}</td>
+								<td>${res.data[i].hits}</td>
+							</tr>
+						`;
+					}
+				}
+				document.getElementById('list').innerHTML = html;
+			},
+			error: function() {
+				alert('오류가 발생하였습니다.');
+			}
+		});
+		
+	}
+	
+	/**
+		 2-1. 키워드 - 엔터 검색 이벤트 바인딩 
+	*/
+	function addEnterSearchEvent() {
+		document.getElementById('keyword').addEventListener('keyup', e => {
+			if(e.keyCode == 13) {
+				findAll(1);
+			}
+		});
+	}
+			
+	function setQueryStringParams() {
+		if(!location.search) {
+			return false;
+		}
+				
+		const form = document.getElementById('searchForm');
+				
+		new URLSearchParams(location.search).forEach( (value, key) => {
+			if(form[key]) {
+				form[key].value = value;
+			}
+		});
+	}	
+	
+	/**
+		 3-1. 게시글 리스트 조회(페이징)
+	 */
+	function findAll(page) {
+				
+		const pageParam = Number(new URLSearchParams(location.search).get('page'));
+				
+		page = (page) ? page : ((pageParam) ? pageParam : 1);
+								
+		const form = document.getElementById('searchForm');
+				
+		// 3-2. url parameter 붙이기
+		const params = {
+			page: page,
+			recordPerPage: 10,
+			pageSize: 5,
+			searchType: form.searchType.value,
+			keyword: form.keyword.value		
+		}
+				
+		const queryString = new URLSearchParams(params).toString();
+		const replaceURI = location.pathname + '?' + queryString;
+		history.replaceState({}, '', replaceURI);
+				
+		<!-- 2022-12-08 -> 여기까지  -->
+		$.ajax({
+			url: "/api/boards",
+			type: "GET",
+			data: params,
+			dataType: "json",
+			contentType: "application/json; charset=UTF-8",
+			success: function(res) {
+				console.log(res);
+				
+				// 3-3. 게시글 리스트 출력
+				let html = '';
+						
+				let num = res.data.params.pagination.totalRecordCount - (res.data.params.page - 1) * res.data.params.recordPerPage;
+						
+				let params = res.data.params;
+				
+				
+				if(!res.data.list.length) {
+					html = '<td colspan="5">등록된 게시글이 없습니다.</td>';
+				} else {
+					for(var i = 0; i < res.data.list.length; i++) {
+						const viewURI = `/user/boards/${res.data.list[i].id}/detail` + '?' + queryString;
+						html += `
+							<tr>
+								<td>${num--}</td>
+								<td class="text-left">
+									<a href="${viewURI}">${res.data.list[i].title}</a>
+								</td>
+								<td>${res.data.list[i].writer}</td>
+								<td>${moment(res.data.list[i].createdDate).format('YYYY-MM-DD HH:mm:ss')}</td>
+								<td>${res.data.list[i].hits}</td>
+							</tr>
+						`;
+					}
+				}
+				document.getElementById('list').innerHTML = html;
+						
+				// 3-4. 게시글 페이징 출력
+				html = '';
+						
+				if(!res.data.params) {
+					document.querySelector('.pagination').innerHTML = '';
+					return false;
+				}
+						
+				const pagination = res.data.params.pagination;
+						
+				// 3-5. 이전 페이지, 처음 페이지
+				if(pagination.existPrevPage) {
+					html += `
+						<li>
+							<a href="javascript:void(0)" onclick="findAll(1);" aria-label="Previous">
+								<span>&laquo;</span>
+							</a>
+						</li>
+						<li>
+							<a href="javascript:void(0)" onclick="findAll(${pagination.startPage - 1});" aria-label="Previous">
+								<span>&lsaquo;</span>
+							</a>
+						</li>
+					`;
+				}
+						
+				// 3-6. 페이지 번호
+				for(var i = pagination.startPage; i <= pagination.endPage; i++) {
+					const active = (i === params.page) ? 'class="active"' : '';
+					html += `
+						<li ${active}>
+							<a href="javascript:void(0)" class="my_atag_none_1" onclick="findAll(${i})">${i}</a>
+						</li>
+					`;
+				}
+						
+				// 3-7. 다음 페이지, 마지막 페이지
+				if(pagination.existNextPage) {
+					html += `
+						<li>
+							<a href="javascript:void(0)" onclick="findAll(${params.page + 1});" aria-label="Next">
+								<span>&rsaquo;</span>
+							</a>
+						</li>
+						<li>
+							<a href="javascript:void(0)" onclick="findAll(${pagination.totalPageCount});" aria-label="Next">
+								<span>&raquo;</span>
+							</a>
+						</li>
+					`
+				}
+						
+				document.querySelector('.pagination').innerHTML = html;
+			},
+			error: function() {
+				alert('오류가 발생하였습니다.');
+			}
+		});
+	}
+</script>
+
+{{>/layout/footer}}

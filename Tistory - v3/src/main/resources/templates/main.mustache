@@ -1,0 +1,140 @@
+{{>/layout/main-header}}
+
+<div class="container">
+{{#postMainRespDto}}
+	<input type="hidden" id="post" value="{{postMainRespDto.posts.content}}">
+	<input type="hidden" id="postDto" value="{{postMainRespDto}}">
+{{/postMainRespDto}}
+
+	<div class="my_main_list">
+		<!-- 아이템 시작 -->
+		{{#postMainRespDto.posts.content}}
+        <div class="my_main_item">
+        	
+            <a href="/user/{{user.id}}/post/{{id}}" class="my_atag_none">
+                <div class="my_main_item_thumnail">
+                {{#thumnail}}
+                	<img src="/thumnail/{{thumnail}}" width="100%" height="100%">
+             	{{/thumnail}}
+             
+             	{{^thumnail}}
+             		<img src="/tistory/images/dog.jpg" width="100%" height="100%">
+             	{{/thumnail}}
+                </div>
+                <div class="my_main_content my_p_sm_1">
+                    <div class="my_main_item_title">
+                        <h3>{{title}}</h3>
+                    </div>
+                    <div class="my_main_item_summary my_mb_sm_1 my_text_two_line">
+                   
+                    </div>
+                    <div class="my_main_item_date my_mb_sm_1">
+                        {{createDate}}
+                    </div>
+            	</div>
+            </a>
+            <a href="/user/{{user.id}}/post" class="my_atag_none">
+                <div class="my_main_item_username">
+                    <span>by </span>
+                    <b>{{user.username}}</b>
+                </div>
+            </a>     
+        </div>
+        {{/postMainRespDto.posts.content}}       
+        <!-- 아이템 끝 -->
+        
+	</div>
+	
+	<!-- 2022-11-28 -> 포스팅 데이터가 없을때 페이징 표시방법 따로 처리. main, list 둘다 해줌 -->
+	{{#postMainRespDto.isFirst}}
+	<div class="my_paging d-flex justify-content-center align-items-center my_mb_lg_1">
+        <a class="my_atag_none my_mr_sm_1" href="/main?page=0">
+           <i class="fa-solid fa-angle-left"></i>
+        </a>
+
+        <a class="my_atag_none_1" onclick="movePage(1);">
+            <div class="my_paging_number_box my_mr_sm_1_1">
+            	1
+        	</div>
+        </a>
+
+        <a class="my_atag_none my_ml_sm_1" href="/main?page=0">
+        	<i class="fa-solid fa-angle-right"></i>
+		</a>
+    </div>
+	{{/postMainRespDto.isFirst}}
+	
+	{{^postMainRespDto.isFirst}}
+	<div class="my_paging d-flex justify-content-center align-items-center my_mb_lg_1">
+		{{#postMainRespDto.isPrev}}
+        <a class="my_atag_none my_mr_sm_1" href="/main?page={{postMainRespDto.prev}}">
+           <i class="fa-solid fa-angle-left"></i>
+        </a>
+		{{/postMainRespDto.isPrev}}
+		
+		{{#postMainRespDto.pageNumbers}}
+        <a class="my_atag_none_{{.}}" onclick="movePage({{.}});">
+            <div class="my_paging_number_box my_mr_sm_1_{{.}}">
+            	{{.}}
+        	</div>
+        </a>
+		{{/postMainRespDto.pageNumbers}}
+		
+		
+		{{#postMainRespDto.isNext}}
+        <a class="my_atag_none my_ml_sm_1" href="/main?page={{postMainRespDto.next}}">
+        	<i class="fa-solid fa-angle-right"></i>
+		</a>
+		{{/postMainRespDto.isNext}}
+    </div>
+    {{/postMainRespDto.isFirst}}
+	
+</div>
+
+<script>
+
+	var search = location.search;
+	
+	var params = new URLSearchParams(search);
+	
+	var getType = params.get('page');
+	
+	$(document).ready(function(){
+		var post = $("#post").val();
+		var postDto = $("#postDto").val();
+		console.log(postDto);
+
+		var search = location.search;
+		
+		var params = new URLSearchParams(search);
+		
+		var getType = params.get('page');
+		
+		if(getType == null || getType == 0) {
+	
+			$(".my_atag_none_1").addClass('active');
+		} else {
+			$(".my_atag_none_1").removeClass('active');
+			
+			getType++;
+			
+			$(`.my_atag_none_${getType}`).addClass('active');
+		}
+		
+		
+		// 2022-11-22 -> active에 색칠하는거 까지 성공했는데 영역 조정해줘야함.
+	
+		
+	});
+	
+	// 2022-10-17 -> 페이징 성공
+	function movePage(page) {
+		
+		var page = page - 1;
+		
+		location.href = "/main?page=" + page; 
+	
+	}
+</script>
+
+{{>/layout/footer}}

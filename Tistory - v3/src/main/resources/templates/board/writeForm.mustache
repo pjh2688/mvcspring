@@ -1,0 +1,192 @@
+{{>/layout/main-header}}
+
+<style>
+    .boardWriteForm {
+    	display: flex;
+    	justify-content: center;
+    	align-items: center;
+    	
+    	flex-direction: column;
+    	
+    	padding-bottom: 50px;
+    }
+    .boardWriteForm .form-group {
+    	width: 100%;
+    	padding-left: 150px;
+    }
+   
+
+</style>
+
+
+<div class="container">
+	
+	<form id="boardWriteForm" class="boardWriteForm">
+		<div class="form-group">
+			<label for="title" class="col-sm-2 control-label">제목</label>
+			<div class="col-sm-10">
+			{{^boardResponseDto}}
+				<input type="text" id="title" class="form-control" placeholder="제목을 입력해 주세요." />
+			{{/boardResponseDto}}
+			{{#boardResponseDto}}
+				<input type="text" id="title" class="form-control" value="{{title}}" placeholder="제목을 입력해 주세요." />
+			{{/boardResponseDto}}
+			</div>
+		</div>
+			
+		<div class="form-group">
+			<label for="writer" class="col-sm-2 control-label">이름</label>
+			<div class="col-sm-10">
+				<input type="text" id="writer" class="form-control" value="{{principal.username}}" readonly />
+			</div>
+		</div>
+
+		<div class="form-group">
+			<label for="content" class="col-sm-2 control-label">내용</label>
+			<div class="col-sm-10">
+			{{^boardResponseDto}}
+				<textarea id="content" class="form-control" placeholder="내용을 입력해 주세요." rows="10"></textarea>
+			{{/boardResponseDto}}
+			{{#boardResponseDto}}
+				<textarea id="content" class="form-control" placeholder="내용을 입력해 주세요." rows="10">{{content}}</textarea>
+			{{/boardResponseDto}}
+			</div>
+		</div>
+
+		<div class="btn_wrap text-center">
+		{{^boardResponseDto}}
+			<button type="button" onclick="save(event);" class="btn btn-primary waves-effect waves-light">저장하기</button>
+		{{/boardResponseDto}}
+		{{#boardResponseDto}}
+			<button type="button" onclick="update({{id}}, event);" class="btn btn-primary waves-effect waves-light">수정하기</button>
+		{{/boardResponseDto}}
+		
+			<button type="button" onclick="goList();" class="btn btn-secondary waves-effect waves-light">뒤로가기</button>
+		</div>
+	</form>
+	
+</div>
+
+<script>
+	/* 1. 유효성 검사 */
+	function isValid() {
+		const form = document.getElementById('boardWriteForm');
+			
+		if(!form.title.value.trim()) {
+			alert('제목을 입력해주세요.');
+			form.title.value = '';
+			form.title.focus();
+			return false;
+		}
+			
+		if(!form.writer.value.trim()) {
+			alert('작성자를 입력해주세요.');
+			form.writer.value = '';
+			form.writer.focus();
+			return false;
+		}
+			
+		if(!form.content.value.trim()) {
+			alert('내용을 입력해주세요.');
+			form.content.value = '';
+			form.content.focus();
+			return false;
+				
+		}
+			
+		return true;
+	}
+	
+	/* 2. 게시글 등록(create) */
+	function save(event) {
+		event.preventDefault();
+		
+		if(!isValid()) {
+			return false;
+		}
+		
+		const form = document.getElementById('boardWriteForm');
+			
+		const params = {
+			title: form.title.value,
+			writer: form.writer.value,
+			content: form.content.value,
+			deleteYn: 'N'
+		};
+		
+		console.log(JSON.stringify(params));
+		
+		$.ajax({
+			data: JSON.stringify(params),
+			url: "/api/boards",
+			type: "POST",
+			dataType: "json",
+			contentType: "application/json; charset=UTF-8",
+			success: function(res) {
+				if(!res) {
+					throw new Error('Request failed');
+				}
+					
+				alert("저장되었습니다.");
+					
+				goList();
+					
+			},
+			error: function() {
+				alert('오류가 발생하였습니다.');
+				goList();
+					
+			}
+		});
+	}
+	
+	/* 3. 게시글 등록(update) */
+	function update(boardId, event) {
+		if(!isValid()) {
+			return false;
+		}
+		
+		const form = document.getElementById('boardWriteForm');
+			
+		const params = {
+			title: form.title.value,
+			writer: form.writer.value,
+			content: form.content.value,
+			deleteYn: 'N'
+		};
+		
+		console.log(JSON.stringify(params));
+		
+		$.ajax({
+			data: JSON.stringify(params),
+			url: "/api/boards/" + boardId,
+			type: "PATCH",
+			dataType: "json",
+			contentType: "application/json; charset=UTF-8",
+			success: function(res) {
+				if(!res) {
+					throw new Error('Request failed');
+				}
+					
+				alert("수정되었습니다.");
+					
+				goList();
+					
+			},
+			error: function() {
+				alert('오류가 발생하였습니다.');
+				goList();
+					
+			}
+		});
+	}
+	
+	/* 5. 뒤로 가기 */
+	function goList() {
+		location.href = '/user/boards' + location.search;
+	}
+   
+</script>
+
+
+{{>/layout/footer}}

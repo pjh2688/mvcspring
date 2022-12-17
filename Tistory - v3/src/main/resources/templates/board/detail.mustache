@@ -1,0 +1,38 @@
+{{>/layout/post-header}}
+
+<div class="container">
+    
+    <div class="my_post_detail_title">
+        <h2>{{boardResponseDto.title}}</h2>
+    </div>
+    <hr />
+
+    <div class="my_post_detail_content">
+    	{{boardResponseDto.content}}
+    </div>
+
+    <div class="my_mt_md_1">
+        <button type="button" class="btn btn-outline-success" onclick="goUpdatePage({{boardResponseDto.id}});">수정</button>
+        <button type="button" class="btn btn-outline-danger">삭제</button>
+    </div>
+ 
+    <br />
+
+    
+</div>
+
+<script>
+	
+	$(document).ready(function(){
+		
+		
+	});
+	
+	/* 5. writeForm으로 이동(수정하기 위해) */
+	function goUpdatePage(boardId) {
+		location.href = '/user/boards/' + boardId + '/update' + location.search;
+	}
+	
+</script>
+
+{{>/layout/footer}}

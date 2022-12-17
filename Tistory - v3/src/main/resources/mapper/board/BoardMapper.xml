@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "mybatis-3-mapper.dtd" "mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.tistory.mapper.board.IBoardMapper">
+	
+	<!-- SELECT 결과 Map -->
+	<resultMap id="BoardResultMap" type="com.tistory.web.dto.board.BoardResponseDto">
+		<result property="id" column="id"/>
+		<result property="title" column="title"/>
+		<result property="content" column="content"/>
+		<result property="writer" column="writer"/>
+		<result property="hits" column="hits"/>
+		<result property="deleteYn" column="deleteYn"/>
+		<result property="createdDate" column="createdDate"/>
+		<result property="modifiedDate" column="modifiedDate"/>
+	</resultMap>
+	
+	<!-- WHERE 조건 -->
+	<sql id="conditions">
+		<where>
+			deleteYn = 'N'
+			<if test="keyword != null and keyword.equals('') == false">
+				<choose>
+					<!-- 2022-12-15 -> searchType = null => searchType == null로 변경 -->
+					<when test="searchType == null or searchType.equals('')">
+						AND (
+							   title LIKE CONCAT('%', #{keyword}, '%') 
+							OR content LIKE CONCAT('%', #{keyword}, '%')
+							OR writer LIKE CONCAT('%', #{keyword}, '%')	 	
+						)
+					</when>
+					<otherwise>
+						<choose>
+							<when test="searchType.equals('title')">
+								AND title LIKE CONCAT('%', #{keyword}, '%')
+							</when>
+							
+							<when test="searchType.equals('content')">
+								AND content LIKE CONCAT('%', #{keyword}, '%')
+							</when>
+							
+							<when test="searchType.equals('writer')">
+								AND writer LIKE CONCAT('%', #{keyword}, '%')
+							</when>
+						</choose>
+					</otherwise>
+				</choose>
+			</if>
+		</where>
+	</sql>
+	
+	<!-- 게시글 갯수 조회 -->
+	<select id="count" parameterType="com.tistory.web.dto.board.paging.CommonParams" resultType="int">
+		SELECT
+			COUNT(*)
+		FROM
+			board
+		<include refid="conditions" />
+	</select>
+	
+	<!-- 게시글 리스트 조회(페이징) -->
+	<select id="findAll" parameterType="com.tistory.web.dto.board.paging.CommonParams" resultMap="BoardResultMap">
+		SELECT
+			id,
+			title,
+			content,
+			writer,
+			hits,
+			deleteYn,
+			createdDate,
+			modifiedDate
+		FROM
+			board
+		<include refid="conditions" />
+		ORDER BY 
+			id DESC, createdDate DESC
+		LIMIT
+			#{pagination.limitStart}, #{recordPerPage}
+			
+	</select>
+
+</mapper>
