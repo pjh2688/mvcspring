@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymleaf.org">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+
+	<link rel="stylesheet" th:href="@{./assets/css/style.css}" />
+	<link rel="stylesheet" th:href="@{./assets/css/bootstrap.min.css}" />
+	
+	<script th:src="@{./assets/js/jquery.min.js}"></script>
+	<script th:src="@{./assets/js/app/code-group.js}"></script>
+	<title>CodeGroup</title>
+</head>
+<body>
+	
+	<a href="/home">home</a>
+	
+	<br/><br/>
+
+	<h3>CodeGroup</h3>
+	
+	<table class="table-striped">
+		<tr>
+			<td>
+				<label for="groupCode">groupCode</label>
+			</td>
+			<td>
+				<input type="text" id="groupCode" value="" />
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<label for="groupName">groupName</label>
+			</td>
+			<td>
+				<input type="text" id="groupName" value="" />
+			</td>
+		</tr>
+	</table>
+
+	<div>
+		<button id="codeGroupListBtn">LIST</button>
+		<button id="codeGroupReadBtn">READ</button>
+		<button id="codeGroupRegisterBtn">REGISTER</button>
+		<button id="codeGroupDeleteBtn">DELETE</button>
+		<button id="codeGroupModifyBtn">MODIFY</button>
+		<button id="codeGroupResetBtn">RESET</button>
+	</div>
+	
+	<br/><br/>
+	
+	<div id="content">
+		
+	</div>
+	
+</body>
+</html>
