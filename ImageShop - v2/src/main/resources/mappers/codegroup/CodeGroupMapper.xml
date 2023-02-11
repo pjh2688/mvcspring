@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "mybatis-3-mapper.dtd" "mybatis-3-mapper.dtd">
+
+<mapper namespace="com.shop.mapper.codegroup.ICodeGroupMapper">
+	<insert id="save">
+		INSERT INTO code_group(
+			group_code,
+			group_name,
+			use_yn,
+			created_Date
+		)
+		VALUES(
+			#{groupCode},
+			#{groupName},
+			'Y',
+			now()
+		)
+	</insert>
+	
+	<!-- *주의 : 카멜케이스 유의. -->
+	<select id="findAll" resultType="com.shop.domain.codegroup.CodeGroup">
+		SELECT 
+			group_code,
+			group_name,
+			use_yn,
+			created_date,
+			modified_date
+		FROM
+			code_group
+		ORDER BY
+			group_code DESC, created_date DESC
+	</select>
+	
+	<select id="findByGroupCode" resultType="com.shop.domain.codegroup.CodeGroup" parameterType="String">
+		SELECT 
+			group_code,
+			group_name,
+			use_yn,
+			created_date,
+			modified_date
+		FROM
+			code_group
+		WHERE group_code = #{groupCode}
+	</select>
+	
+	<update id="update">
+		UPDATE 
+			code_group
+		SET
+			group_name = #{groupName},
+			modified_date = now()
+		WHERE
+			group_code = #{groupCode}
+	</update>
+	
+	<delete id="delete">
+		DELETE FROM
+			code_group
+		WHERE
+			group_code = #{groupCode}
+	</delete>
+</mapper>

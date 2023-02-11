@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymleaf.org">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+
+	<link rel="stylesheet" th:href="@{./assets/css/style.css}" />
+	<link rel="stylesheet" th:href="@{./assets/css/bootstrap.min.css}" />
+	
+	<script th:src="@{./assets/js/jquery.min.js}"></script>
+	<script th:src="@{./assets/js/app/code-detail.js}"></script>
+	<title>CodeDetail</title>
+</head>
+<body>
+	
+	<a href="/home">home</a>
+	
+	<br/><br/>
+
+	<h3>CodeDetail</h3>
+	
+	<table class="table-striped">
+		<tr>
+			<td>
+				<label for="codeGroupCode">groupCode</label>
+			</td>
+			<td>
+				<select id="codeGroupCode">
+				</select>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<label for="codeValue">codeValue</label>
+			</td>
+			<td>
+				<input type="text" id="codeValue" value="" />
+			</td>
+		</tr>
+		
+		<tr>
+			<td>
+				<label for="codeName">codeName</label>
+			</td>
+			<td>
+				<input type="text" id="codeName" value="" />
+			</td>
+		</tr>
+	</table>
+
+	<div>
+		<button id="codeDetailListBtn">LIST</button>
+		<button id="codeDetailReadBtn">READ</button>
+		<button id="codeDetailRegisterBtn">REGISTER</button>
+		<button id="codeDetailDeleteBtn">DELETE</button>
+		<button id="codeDetailModifyBtn">MODIFY</button>
+		<button id="codeDetailResetBtn">RESET</button>
+	</div>
+	
+	<br/><br/>
+	
+	<div id="content">
+		
+	</div>
+	
+</body>
+</html>
