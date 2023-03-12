@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymleaf.org">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+
+	<link rel="stylesheet" th:href="@{./assets/css/style.css}" />
+	<link rel="stylesheet" th:href="@{./assets/css/bootstrap.min.css}" />
+	
+	<script th:src="@{./assets/js/jquery.min.js}"></script>
+	<script th:src="@{./assets/js/app/setup-admin.js}"></script>
+	<title>Setup Admin</title>
+</head>
+<body>
+	
+	<a href="/home">home</a>
+	
+	<br/><br/>
+
+	<h3>Setup Admin</h3>
+	
+	<form id="member_form"> 
+		<table class="table-striped">
+		<tr>
+			<td>
+				<label for="adminId">adminId</label>
+			</td>
+			<td>
+				<input type="text" id="adminId" value="" />
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<label for="adminPw">adminPw</label>
+			</td>
+			<td>
+				<input type="password" id="adminPw" value="" />
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<label for="adminName">adminName</label>
+			</td>
+			<td>
+				<input type="text" id="adminName" value="" />
+			</td>
+		</tr>
+		
+		<tr>
+			<td>
+				<label for="job">job</label>
+			</td>
+			<td>
+				<select id="job">
+				
+				</select>
+			</td>
+		</tr>
+		</table>
+	</form>
+	<br/>
+
+	<div>
+		<button id="adminRegisterBtn">REGISTER</button>
+		<button id="adminResetBtn">RESET</button>
+	</div>
+	
+	<br/><br/>
+	
+	<div id="content">
+		
+	</div>
+	
+</body>
+</html>

@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymleaf.org">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+
+	<link rel="stylesheet" th:href="@{./assets/css/style.css}" />
+	<link rel="stylesheet" th:href="@{./assets/css/bootstrap.min.css}" />
+	
+	<script th:src="@{./assets/js/jquery.min.js}"></script>
+	<script th:src="@{./assets/js/app/member.js}"></script>
+	<script th:src="@{./assets/js/base64.min.js}"></script>
+	
+	<title>Member</title>
+</head>
+<body>
+	
+	<a href="/home">home</a>
+	
+	<br/><br/>
+
+	<h3>Member</h3>
+	
+	<form id="member_form"> 
+		<table class="table-striped">
+		<tr>
+			<td>
+				<label for="userNo">userNo</label>
+			</td>
+			<td>
+				<input type="text" id="userNo" value="" />
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<label for="userId">userId</label>
+			</td>
+			<td>
+				<input type="text" id="userId" value="" />
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<label for="userPw">userPw</label>
+			</td>
+			<td>
+				<input type="password" id="userPw" value="" />
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<label for="userName">userName</label>
+			</td>
+			<td>
+				<input type="text" id="userName" value="" />
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<label for="job">job</label>
+			</td>
+			<td>
+				<select id="job">
+				
+				</select>
+			</td>
+		</tr>
+		<tr>
+			<td>auth - 1</td>
+			<td>
+				<select id="memberAuth0">
+					<option value="basic" selected="selected">=== 선택해 주세요 ===</option>
+					<option value="ROLE_USER">사용자</option>
+					<option value="ROLE_MEMBER">회원</option>
+					<option value="ROLE_ADMIN">관리자</option>
+				</select>
+			</td>
+		</tr>
+		<tr>
+			<td>auth - 2</td>
+			<td>
+				<select id="memberAuth1">
+					<option value="" selected="selected">=== 선택해 주세요 ===</option>
+					<option value="ROLE_USER">사용자</option>
+					<option value="ROLE_MEMBER">회원</option>
+					<option value="ROLE_ADMIN">관리자</option>
+				</select>
+			</td>
+		</tr>
+		<tr>
+			<td>auth - 3</td>
+			<td>
+				<select id="memberAuth2">
+					<option value="" selected="selected">=== 선택해 주세요 ===</option>
+					<option value="ROLE_USER">사용자</option>
+					<option value="ROLE_MEMBER">회원</option>
+					<option value="ROLE_ADMIN">관리자</option>
+				</select>
+			</td>
+		</tr>
+		</table>
+	</form>
+	<br/>
+
+	<div>
+		<button id="memberListBtn">LIST</button>
+		<button id="memberReadBtn">READ</button>
+		<button id="memberRegisterBtn">REGISTER</button>
+		<button id="memberDeleteBtn">DELETE</button>
+		<button id="memberModifyBtn">MODIFY</button>
+		<button id="memberResetBtn">RESET</button>
+	</div>
+	
+	<br/><br/>
+	
+	<div id="content">
+		
+	</div>
+	
+</body>
+</html>

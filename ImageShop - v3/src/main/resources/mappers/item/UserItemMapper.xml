@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "mybatis-3-mapper.dtd" "mybatis-3-mapper.dtd">
+
+<mapper namespace="com.shop.mapper.item.IUserItemMapper">
+
+	<insert id="save" parameterType="com.shop.domain.item.UserItem">
+		INSERT INTO user_item(
+			user_no,
+			item_id,
+			created_date
+		) VALUES (
+			#{userNo},
+			#{itemId},
+			now()
+		)
+	</insert>
+</mapper>

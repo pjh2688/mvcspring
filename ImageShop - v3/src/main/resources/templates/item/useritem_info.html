@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymleaf.org">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+
+	<link rel="stylesheet" th:href="@{./../assets/css/style.css}" />
+	<link rel="stylesheet" th:href="@{./../assets/css/bootstrap.min.css}" />
+	
+	<script th:src="@{./../assets/js/jquery.min.js}"></script>
+	<script th:src="@{./../assets/js/app/item.js}"></script>
+	<script th:src="@{./../assets/js/app/useritem.js}"></script>
+	<script th:src="@{./../assets/js/app/coin.js}"></script>
+	<script th:src="@{./../assets/js/base64.min.js}"></script>
+	
+</head>
+<body>
+
+	<a href="/home">home</a>
+	
+	<br/><br/>
+
+	<h3>UserItem</h3>
+	
+	<form id="item_form"> 
+		<table class="table-striped">
+			<tr>
+				<td><label for="userItemNo">userItemNo</label></td>
+				<td><input type="text" id="userItemNo" value=""></td>
+			</tr>
+			<tr>
+				<td><label for="itemName">itemName</label></td>
+				<td><input type="text" id="itemName" value=""></td>
+			</tr>
+			<tr>
+				<td><label for="price">price</label></td>
+				<td><input type="text" id="price" value=""></td>
+			</tr>
+			<tr>
+				<td><label for="description">description</label></td>
+				<td><textarea id="description" rows="3" cols="22"></textarea></td>
+			</tr>
+			<tr>
+				<td><label for="file">picture_file</label></td>
+				<td>			
+					<img src="" width=100 height=100>				
+				</td>
+			</tr>
+			
+		</table>
+	</form>
+	
+	<div>
+		<button id="userItemListBtn">LIST</button>
+		<button id="userItemReadBtn">READ</button>
+		<button id="userItemResetBtn">RESET</button>
+		<button id="itemDownloadBtn">DOWNLOAD</button>
+	</div>
+	
+	<br/>
+	
+	<div id="content">
+		
+	</div>
+
+</body>
+</html>

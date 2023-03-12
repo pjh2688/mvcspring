@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymleaf.org">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+
+	<link rel="stylesheet" th:href="@{./../assets/css/style.css}" />
+	<link rel="stylesheet" th:href="@{./../assets/css/bootstrap.min.css}" />
+	
+	<script th:src="@{./../assets/js/jquery.min.js}"></script>
+	<script th:src="@{./../assets/js/app/coin.js}"></script>
+	<script th:src="@{./../assets/js/base64.min.js}"></script>
+	
+</head>
+<body>
+
+	<a href="/home">home</a>
+	
+	<br/><br/>
+
+	<h3>Coin</h3>
+	
+	<form id="coin_form"> 
+		<table class="table-striped">
+			<tr>
+				<td>
+					<label for="coinAmount">amount</label>
+				</td>
+				<td>
+					<input type="text" id="coinAmount" value="1000" />
+				</td>
+			</tr>
+		</table>
+	</form>
+	
+	<div>
+		<button id="coinChargeListBtn">LIST CHARGE</button>
+		<button id="coinPayListBtn">LIST PAY</button>
+		<button id="coinChargeBtn">CHARGE</button>
+		<button id="coinResetBtn">RESET</button>
+	</div>
+	
+	<br/>
+	
+	<div id="content">
+		
+	</div>
+
+</body>
+</html>

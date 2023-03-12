@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymleaf.org">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+
+	<link rel="stylesheet" th:href="@{./../assets/css/style.css}" />
+	<link rel="stylesheet" th:href="@{./../assets/css/bootstrap.min.css}" />
+	
+	<script th:src="@{./../assets/js/jquery.min.js}"></script>
+	<script th:src="@{./../assets/js/app/notice.js}"></script>
+	<script th:src="@{./../assets/js/base64.min.js}"></script>
+	
+</head>
+<body>
+
+	<a href="/home">home</a>
+	
+	<br/><br/>
+
+	<h3>Notice</h3>
+	
+	<form id="notice_form"> 
+		<table class="table-striped">
+			<tr>
+				<td><label for="noticeNo">noticeNo</label></td>
+				<td><input type="text" id="noticeNo" value=""></td>
+			</tr>
+			<tr>
+				<td><label for="noticeTitle">noticeTitle</label></td>
+				<td><input type="text" id="noticeTitle" value=""></td>
+			</tr>
+			<tr>
+				<td><label for="noticeContent">noticeContent</label></td>
+				<td><textarea id="noticeContent" rows="3" cols="22"></textarea></td>
+			</tr>
+		</table>
+	</form>
+	
+	<div>
+		<button id="noticeListBtn">LIST</button>
+		<button id="noticeReadBtn">READ</button>
+		<button id="noticeRegisterBtn">REGISTER</button>
+		<button id="noticeDeleteBtn">DELETE</button>
+		<button id="noticeModifyBtn">MODIFY</button>
+		<button id="noticeResetBtn">RESET</button>
+	</div>
+	
+	<br/>
+	
+	<div id="content">
+		
+	</div>
+
+</body>
+</html>

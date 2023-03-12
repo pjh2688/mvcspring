@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymleaf.org">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+
+	<link rel="stylesheet" th:href="@{./assets/css/style.css}" />
+	<link rel="stylesheet" th:href="@{./assets/css/bootstrap.min.css}" />
+	
+	<script th:src="@{./assets/js/jquery.min.js}"></script>
+	<script th:src="@{./assets/js/app/login.js}"></script>
+	<title>loginForm</title>
+</head>
+<body>
+
+	<a href="/home">home</a>
+	
+	<br/><br/>
+	
+	<h3>loginForm</h3>
+	
+	<form id="login_form"> 
+		<table class="table-striped">
+		<tr>
+			<td>
+				<label for="userId">userId</label>
+			</td>
+			<td>
+				<input type="text" id="userId" value="" />
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<label for="userPw">userPw</label>
+			</td>
+			<td>
+				<input type="password" id="userPw" value="" />
+			</td>
+		</tr>
+		
+		</table>
+	</form>
+	
+	<div>
+		<button id="loginBtn">login</button>
+		<button id="myInfoBtn">myInfo</button>
+		<button id="logoutBtn">logout</button>
+	</div>
+	
+	<br/>
+	
+	<div id="content">
+		
+	</div>
+	
+</body>
+</html>

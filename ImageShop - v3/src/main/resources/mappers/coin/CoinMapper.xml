@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "mybatis-3-mapper.dtd" "mybatis-3-mapper.dtd">
+
+<mapper namespace="com.shop.mapper.coin.ICoinMapper">
+
+	<insert id="create" parameterType="com.shop.domain.coin.ChargeCoin">
+		INSERT INTO charge_coin_history(
+			user_no, 
+			amount, 
+			created_date
+		) VALUES(
+			#{userNo},
+			#{amount},
+			now()
+		)
+	</insert>
+	
+	<update id="charge" parameterType="com.shop.domain.coin.ChargeCoin">
+		UPDATE
+			MEMBER
+		SET
+			coin = (coin + #{amount})
+		WHERE
+			user_no = #{userNo}
+	</update>
+	
+	<select id="findByUserNo" resultType="com.shop.domain.coin.ChargeCoin" parameterType="Long">
+		SELECT
+			history_no,
+			user_no,
+			amount,
+			created_date,
+			modified_date
+		FROM
+			charge_coin_history
+		WHERE 
+			history_no > 0
+		AND
+			user_no = #{userNo}
+		ORDER BY
+			history_no DESC,
+			created_date DESC
+	</select>
+	
+	<update id="pay" parameterType="com.shop.domain.coin.PayCoin">
+		UPDATE
+			member
+		SET
+			coin = (coin - #{amount}),
+			modified_date = now()
+		WHERE
+			user_no = #{userNo}
+	</update>
+	
+	<insert id="createPayHistory" parameterType="com.shop.domain.coin.PayCoin">
+		INSERT INTO pay_coin_history(
+			user_no,
+			item_id,
+			amount,
+			created_date
+		)
+		VALUES(
+			#{userNo},
+			#{itemId},
+			#{amount},
+			now()
+		)
+	</insert>
+
+</mapper>

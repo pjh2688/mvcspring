@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "mybatis-3-mapper.dtd" "mybatis-3-mapper.dtd">
+
+<mapper namespace="com.shop.mapper.notice.INoticeMapper">
+
+	<insert id="save" parameterType="com.shop.domain.notice.Notice">
+		INSERT INTO notice(
+			title,
+			content,
+			writer,
+			created_date
+		)
+		VALUES(
+			#{title},
+			#{content},
+			#{writer},
+			now()
+		)
+	</insert>
+	
+	<!-- *주의 : 카멜케이스 유의. -->
+	<select id="findAll" resultType="com.shop.domain.notice.Notice">
+		SELECT
+			notice_no,
+			title,
+			content,
+			writer,
+			created_date,
+			modified_date
+		FROM
+			notice
+		WHERE
+			notice_no > 0
+		ORDER BY
+			notice_no DESC,
+			created_date DESC
+	</select>
+	
+	<select id="findByNoticeNo" resultType="com.shop.domain.notice.Notice" parameterType="Long">
+		SELECT
+			notice_no,
+			title,
+			content,
+			writer,
+			created_date,
+			modified_date
+		FROM
+			notice
+		WHERE 
+			notice_no = #{noticeNo}
+	</select>
+	
+	<update id="update" parameterType="com.shop.domain.notice.Notice">
+		UPDATE 
+			notice
+		SET
+			title = #{title},
+			content = #{content},
+			writer = #{writer},
+			modified_date = now()
+		WHERE
+			notice_no = #{noticeNo}
+	</update>
+	
+	<delete id="delete" parameterType="long">
+		DELETE FROM
+			notice
+		WHERE
+			notice_no = #{noticeNo}
+	</delete>
+	
+</mapper>
