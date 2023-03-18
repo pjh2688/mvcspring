@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymleaf.org">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+
+	<link rel="stylesheet" th:href="@{./../assets/css/style.css}" />
+	<link rel="stylesheet" th:href="@{./../assets/css/bootstrap.min.css}" />
+	
+	<script th:src="@{./../assets/js/jquery.min.js}"></script>
+	<script th:src="@{./../assets/js/app/item.js}"></script>
+	<script th:src="@{./../assets/js/base64.min.js}"></script>
+	
+</head>
+<body>
+
+	<a href="/home">home</a>
+	
+	<br/><br/>
+
+	<h3>Item</h3>
+	
+	<form id="item_form"> 
+		<table class="table-striped">
+			<tr>
+				<td><label for="itemId">itemId</label></td>
+				<td><input type="text" id="itemId" value=""></td>
+			</tr>
+			<tr>
+				<td><label for="itemName">itemName</label></td>
+				<td><input type="text" id="itemName" value=""></td>
+			</tr>
+			<tr>
+				<td><label for="price">price</label></td>
+				<td><input type="text" id="price" value=""></td>
+			</tr>
+			<tr>
+				<td><label for="description">description</label></td>
+				<td><textarea id="description" rows="3" cols="22"></textarea></td>
+			</tr>
+			<tr>
+				<td><label for="itemInputFile01">picture_file</label></td>
+				<td>
+					<a id="fileName01" onclick=""></a>
+					<input type="file" id="itemInputFile01" name="picture">
+				</td>
+			</tr>
+			<tr>
+				<td></td>
+				<td>
+					<div id="preview01">
+						<img src="" alt="" width="210" height="50" />
+					</div>
+				</td>
+			</tr>
+			<tr>
+				<td><label for="itemInputFile02">preview file</label></td>
+				<td>
+					<a id="fileName02" onclick=""></a>
+					<input type="file" id="itemInputFile02" name="picture">
+				</td>
+			</tr>
+			<tr>
+				<td></td>
+				<td>
+					<div id="preview02">
+						<img src="" alt="" width="210" height="50" />
+					</div>
+				</td>
+			</tr>
+			
+		</table>
+	</form>
+	
+	<div>
+		<button id="itemListBtn">LIST</button>
+		<button id="itemReadBtn">READ</button>
+		<button id="itemRegisterBtn">REGISTER</button>
+		<button id="itemDeleteBtn">DELETE</button>
+		<button id="itemModifyBtn">MODIFY</button>
+		<button id="itemResetBtn">RESET</button>
+		<button id="itemDownloadBtn">DOWNLOAD</button>
+		<button id="itemBuyBtn">BUY</button>
+	</div>
+	
+	<br/>
+	
+	<div id="content">
+		
+	</div>
+
+</body>
+</html>

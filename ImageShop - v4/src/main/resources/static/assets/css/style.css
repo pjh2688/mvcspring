@@ -1,0 +1,16 @@
+@charset "UTF-8";
+
+#content {
+	width: 1000px;
+}
+
+#content table {
+	width: 800px;
+	text-align: center;
+	table-layout: fixed;
+}
+
+#main-content {
+	display: flex;
+	justify-content: center;
+}

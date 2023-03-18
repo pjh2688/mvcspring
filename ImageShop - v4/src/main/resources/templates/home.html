@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymleaf.org">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+
+	<link rel="stylesheet" th:href="@{./assets/css/style.css}" />
+	<link rel="stylesheet" th:href="@{./assets/css/bootstrap.min.css}" />
+	
+	<script th:src="@{./assets/js/jquery.min.js}"></script>
+	<script th:src="@{./assets/js/app/login.js}"></script>
+	<script th:src="@{./assets/js/app/code-group.js}"></script>
+	<script th:src="@{./assets/js/app/notice.js}"></script>
+	<script th:src="@{./assets/js/base64.min.js}"></script>
+	<title>Home</title>
+</head>
+<body>
+
+	<h2 th:text="#{common.homeWelcome}">Home.html</h2>
+	
+	<p th:text="${serverTime}">시간 표시</p>
+	
+	<div>
+		<ul>
+			<li>
+				<a href="/viewCodeGroup">코드그룹 관리</a>
+			</li>
+			<li>
+				<a href="/viewCodeDetail">코드그룹 상세</a>
+			</li>
+			<li>
+				<a href="/viewMember">회원 관리</a>
+			</li>
+			<li>
+				<a href="/registerAdmin">관리자 생성</a>
+			</li>
+			<li>
+				<a href="/loginForm">로그인 하기</a>
+			</li>
+			
+			<li>
+				<a href="/member/board">회원 게시판</a>
+			</li>
+			
+			<li>
+				<a href="/viewNotice">공지 사항</a>
+			</li>
+			
+			<li>
+				<a href="/viewItem">상품 관리</a>
+			</li>
+			
+			<li>
+				<a href="/viewCoin">코인 관리</a>
+			</li>
+			
+			<li>
+				<a href="/viewUserItem">구매내역 관리</a>
+			</li>
+			
+			<li>
+				<a href="/viewPds">공개 자료실 관리</a>
+			</li>
+		</ul>
+	</div>
+	
+	<hr>
+	
+</body>
+</html>

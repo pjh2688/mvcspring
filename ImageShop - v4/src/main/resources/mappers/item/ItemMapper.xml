@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "mybatis-3-mapper.dtd" "mybatis-3-mapper.dtd">
+
+<mapper namespace="com.shop.mapper.item.IItemMapper">
+	
+	<insert id="save" parameterType="com.shop.domain.item.Item">
+		INSERT INTO item(
+			item_name,
+			price,
+			description,
+			picture_url,
+			picture_name,
+			preview_url,
+			preview_name,
+			created_date
+		)
+		VALUES(
+			#{itemName},
+			#{price},
+			#{description},
+			#{pictureUrl},
+			#{pictureName},
+			#{previewUrl},
+			#{previewName},
+			now()
+		)
+	</insert>
+	
+	<!-- *주의 : 카멜케이스 유의. -->
+	<select id="findAll" resultType="com.shop.domain.item.Item">
+		SELECT
+			item_id,
+			item_name,
+			price,
+			description,
+			picture_url,
+			picture_name,
+			preview_url,
+			preview_name,
+			created_date,
+			modified_date
+		FROM
+			item
+		WHERE
+			item_id > 0
+		ORDER BY
+			item_id DESC,
+			created_date DESC
+	</select>
+	
+	<select id="findByItemId" resultType="com.shop.domain.item.Item" parameterType="Long">
+		SELECT
+			item_id,
+			item_name,
+			price,
+			description,
+			picture_url,
+			picture_name,
+			preview_url,
+			preview_name,
+			created_date,
+			modified_date
+		FROM
+			item
+		WHERE 
+			item_id = #{itemId}
+	</select>
+	
+	<update id="update" parameterType="com.shop.domain.item.Item">
+		UPDATE 
+			item
+		SET
+			item_name = #{itemName},
+			price = #{price},
+			description = #{description},
+			picture_url = #{pictureUrl},
+			picture_name = #{pictureName},
+			preview_url = #{previewUrl},
+			preview_name= #{previewName},
+			modified_date = now()
+		WHERE
+			item_id = #{itemId}
+	</update>
+	
+	<delete id="delete" parameterType="Long">
+		DELETE FROM
+			item
+		WHERE
+			item_id = #{itemId}
+	</delete>
+
+</mapper>

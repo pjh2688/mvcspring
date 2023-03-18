@@ -1,0 +1,69 @@
+plugins {
+	id 'java'
+	id 'war'
+	id 'org.springframework.boot' version '2.7.2'
+	id 'io.spring.dependency-management' version '1.0.12.RELEASE'
+}
+
+group = 'com.shop'
+version = '0.0.1-SNAPSHOT'
+sourceCompatibility = '1.8'
+
+repositories {
+	mavenCentral()
+}
+
+dependencies {
+	/* 1. web */
+	implementation 'org.springframework.boot:spring-boot-starter-web'
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+
+	/* 2. 배포시 내장톰캣을 사용하지 않을거라는 dependency */
+	providedRuntime 'org.springframework.boot:spring-boot-starter-tomcat'
+
+	/* 3-1. lombok */
+	compileOnly 'org.projectlombok:lombok'
+	/* 3-2. lombok 어노테이션 인식 가능 */
+	annotationProcessor 'org.projectlombok:lombok'
+	
+	/* 4. devtools */
+	runtimeOnly 'org.springframework.boot:spring-boot-devtools'
+	
+	/* 5. MariaDB */
+	runtimeOnly 'org.mariadb.jdbc:mariadb-java-client' 
+	
+	/* 6-1. jwt - api */
+	implementation 'io.jsonwebtoken:jjwt-api:0.10.2'
+	
+	/* 6-2. jwt - impl */
+	runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.10.2'
+	
+	/* 6-3. jwt - jackson*/
+	runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.10.2'
+	
+	/* 7. security */
+	implementation 'org.springframework.boot:spring-boot-starter-security'
+	
+	/* 8. 프로퍼티 값 설정  관련 */
+	annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
+	
+	/* 9. view template : thymeleaf */ 
+	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
+	
+	/* 10. mybatis */ 
+	implementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter:2.2.2'
+	
+	implementation 'org.springframework.boot:spring-boot-starter-actuator'
+	
+	implementation 'org.springframework.boot:spring-boot-starter-validation'
+	
+	implementation 'org.thymeleaf.extras:thymeleaf-extras-springsecurity5'
+	
+	implementation 'org.springframework.boot:spring-boot-starter-aop'
+
+	testImplementation 'org.springframework.security:spring-security-test'
+}
+
+tasks.named('test') {
+	useJUnitPlatform()
+}
