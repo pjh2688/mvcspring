@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "mybatis-3-mapper.dtd" "mybatis-3-mapper.dtd">
+
+<mapper namespace="com.shop.mapper.board.IBoardMapper">
+	
+	<insert id="save" parameterType="com.shop.domain.board.Board">
+		INSERT INTO board(
+			title,
+			content,
+			writer,
+			created_date
+		)
+		VALUES(
+			#{title},
+			#{content},
+			#{writer},
+			now()
+		)
+	</insert>
+	
+	<!-- *주의 : 카멜케이스 유의. -->
+	<select id="findAll" resultType="com.shop.domain.board.Board">
+		SELECT
+			board_no,
+			title,
+			content,
+			writer,
+			created_date,
+			modified_date
+		FROM
+			board
+		WHERE
+			board_no > 0
+		ORDER BY
+			board_no DESC,
+			created_date DESC
+	</select>
+	
+	<select id="findByBoardNo" resultType="com.shop.domain.board.Board" parameterType="Long">
+		SELECT
+			board_no,
+			title,
+			content,
+			writer,
+			created_date,
+			modified_date
+		FROM
+			board
+		WHERE 
+			board_no = #{boardNo}
+	</select>
+	
+	<update id="update" parameterType="com.shop.domain.board.Board">
+		UPDATE 
+			board
+		SET
+			title = #{title},
+			content = #{content},
+			writer = #{writer},
+			modified_date = now()
+		WHERE
+			board_no = #{boardNo}
+	</update>
+	
+	<delete id="delete" parameterType="long">
+		DELETE FROM
+			board
+		WHERE
+			board_no = #{boardNo}
+	</delete>
+	
+</mapper>

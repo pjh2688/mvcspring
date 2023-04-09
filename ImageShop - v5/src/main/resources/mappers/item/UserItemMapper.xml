@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "mybatis-3-mapper.dtd" "mybatis-3-mapper.dtd">
+
+<mapper namespace="com.shop.mapper.item.IUserItemMapper">
+
+	<insert id="save" parameterType="com.shop.domain.item.UserItem">
+		INSERT INTO user_item(
+			user_no,
+			item_id,
+			created_date
+		) VALUES (
+			#{userNo},
+			#{itemId},
+			now()
+		)
+	</insert>
+	
+	<select id="findAllByUserNo" resultType="com.shop.domain.item.UserItem" parameterType="Long">
+		SELECT
+			a.user_item_no,
+			a.user_no,
+			a.item_id,
+			b.item_name,
+			b.price,
+			b.description,
+			b.picture_url,
+			b.picture_name,
+			a.created_date,
+			a.modified_date
+		FROM
+			user_item a 
+		INNER JOIN
+			item b
+		ON
+			a.item_id = b.item_id
+		WHERE
+			user_no = #{userNo} 
+		ORDER BY
+			user_item_no DESC,
+			created_date DESC
+	
+	</select>
+	
+	<select id="findByUserItemNo" resultType="com.shop.domain.item.UserItem" parameterType="Long">
+		SELECT
+			a.user_item_no,
+			a.user_no,
+			a.item_id,
+			b.item_name,
+			b.price,
+			b.description,
+			b.picture_url,
+			b.picture_name,
+			a.created_date,
+			a.modified_date
+		FROM
+			user_item a 
+		INNER JOIN
+			item b
+		ON
+			a.item_id = b.item_id
+		WHERE
+			user_item_no = #{userItemNo} 
+	</select>
+</mapper>

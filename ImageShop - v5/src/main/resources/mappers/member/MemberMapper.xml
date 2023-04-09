@@ -1,0 +1,214 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "mybatis-3-mapper.dtd" "mybatis-3-mapper.dtd">
+
+<mapper namespace="com.shop.mapper.member.IMemberMapper">
+	
+	<insert id="createAuth" parameterType="com.shop.domain.member.MemberAuth">
+		INSERT INTO member_auth(
+			user_no,
+			auth,
+			created_date
+		)	
+		VALUES(
+			#{userNo},
+			#{auth},
+			now()
+		)
+	</insert>
+	
+	<delete id="deleteAuth">
+		DELETE FROM
+			member_auth
+		WHERE
+			user_no = #{userNo}
+	</delete>
+
+	<select id="getCodeLabelValueList" parameterType="String" resultType="com.shop.domain.codelabel.CodeLabelValue">
+		SELECT
+			code_value as value,
+			code_name as label
+		FROM
+			code_detail
+		WHERE
+			group_code = #{groupCode}
+		AND
+			use_yn = 'Y'
+		ORDER BY
+			sort_seq
+	</select>
+	
+	<insert id="save" parameterType="com.shop.domain.member.Member">
+		INSERT INTO member(
+			user_id,
+			user_pw,
+			user_name,
+			job,
+			coin,
+			created_date
+		)
+		VALUES(
+			#{userId},
+			#{userPw},
+			#{userName},
+			#{job},
+			0,
+			now()
+		)
+	</insert>
+	
+	<resultMap type="com.shop.domain.member.Member" id="memberMap">
+		<!-- PK -->
+		<id property="userNo" column="user_no"/>
+		
+		<result property="userNo" column="user_no" />
+		<result property="userId" column="user_id" />
+		<result property="userPw" column="user_pw" />
+		<result property="userName" column="user_name" />
+		<result property="job" column="job" />
+		<result property="coin" column="coin" />
+		<result property="enabled" column="enabled" />
+		<result property="createdDate" column="created_date" />
+		<result property="modifiedDate" column="modified_date" />
+		<result property="refreshToken" column="refresh_token" />
+		
+		<collection property="authList" resultMap="authMap"></collection>
+	</resultMap>
+	
+	<resultMap type="com.shop.domain.member.MemberAuth" id="authMap" >
+		<result property="userNo" column="user_no"/>
+		<result property="auth" column="auth"/>
+	</resultMap>
+	
+	<select id="findByUserId" resultType="com.shop.domain.member.Member" parameterType="String">
+		SELECT 
+			user_no,
+			user_id,
+			user_pw,
+			user_name,
+			job,
+			coin,
+			refresh_token,
+			created_date,
+			modified_date
+		FROM
+			member
+		WHERE 
+			user_id = #{userId}
+	</select>
+	
+	<select id="findByUserNo" resultMap="memberMap" parameterType="long">
+		SELECT 
+			m.user_no,
+			m.user_id,
+			user_pw,
+			user_name,
+			job,
+			coin,
+			m.created_date,
+			m.modified_date,
+			auth,
+			m.refresh_token
+		FROM
+			member m 
+				LEFT OUTER JOIN
+					member_auth a
+						ON
+							m.user_no = a.user_no
+		WHERE 
+			m.user_no = #{userNo}
+	</select>
+	
+	<!-- *주의 : 카멜케이스 유의. -->
+	<select id="findAll" resultMap="memberMap">
+		SELECT
+			m.user_no, 
+			m.user_id,
+			user_pw,
+			user_name,
+			(
+				SELECT 
+					code_name 
+			 	FROM 
+			 		code_detail 
+			 	WHERE 
+			 		group_code = 'A01' AND code_value = job	
+			) as job,
+			coin,
+			m.created_date,
+			m.modified_date,
+			auth,
+			m.refresh_token
+		FROM
+			member m 
+				LEFT OUTER JOIN
+					member_auth a
+						ON
+							m.user_no = a.user_no
+		ORDER BY
+			created_date DESC
+	</select>
+	
+	<update id="update" parameterType="com.shop.domain.member.Member">
+		UPDATE 
+			member
+		SET
+			user_name = #{userName},
+			job = #{job},
+			modified_date = now(),
+			enabled = true,
+			refresh_token = #{refreshToken}
+		WHERE
+			user_no = #{userNo}
+	</update>
+	
+	<delete id="delete" parameterType="long">
+		DELETE FROM
+			member
+		WHERE
+			user_no = #{userNo}
+	</delete>
+	
+	<select id="findUserNoByUserId" resultType="long" parameterType="String">
+		SELECT 
+			user_no
+		FROM
+			member
+		WHERE
+			user_id = #{userId}
+	</select>
+	
+	<select id="countAll" resultType="int">
+		SELECT
+			count(*)
+		FROM
+			member
+	</select>
+	
+	<select id="findMemberAuthByUserNo" resultType="com.shop.domain.member.MemberAuth" parameterType="long">
+		SELECT 
+			*
+		FROM
+			member_auth
+		WHERE
+			user_no = #{userNo}
+	</select>
+	
+	<select id="findMemberByRefreshToken" resultType="com.shop.domain.member.Member" parameterType="String">
+		SELECT
+			*
+		FROM
+			member
+		WHERE
+			refresh_token = #{refreshToken}
+	</select>
+	
+	<select id="getCoin" resultType="int" parameterType="long">
+		SELECT
+			coin
+		FROM
+			member
+		WHERE
+			user_no = #{userNo}
+	</select>
+	
+</mapper>

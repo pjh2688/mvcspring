@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "mybatis-3-mapper.dtd" "mybatis-3-mapper.dtd">
+
+<mapper namespace="com.shop.mapper.pds.IPdsMapper">
+
+	<insert id="save" parameterType="com.shop.domain.pds.Pds">
+		INSERT INTO pds(
+			pds_item_name,
+			description,
+			view_cnt,
+			created_date
+		) VALUES(
+			#{pdsItemName},
+			#{description},
+			0,
+			now()
+		)
+	</insert>
+	
+	<update id="updateViewCnt" parameterType="long">
+		UPDATE 
+			pds
+		SET
+			view_cnt = view_cnt + 1
+		WHERE
+			pds_item_id = #{pdsItemId}
+	</update>
+	
+	<update id="updateAttachDownCnt">
+		UPDATE 
+			pds_file
+		SET
+			down_cnt = down_cnt + 1
+		WHERE
+			full_name = #{fullName}
+	</update>
+	
+	<insert id="addAttach" parameterType="com.shop.domain.pds.PdsFile">
+		INSERT INTO pds_file(
+			file_name,
+			file_url,
+			pds_item_id,
+			down_cnt,
+			created_date
+		) VALUES(
+			#{fileName},
+			#{fileUrl},
+			#{pdsItemId},
+			0,
+			now()
+		)
+	</insert>
+	
+	<select id="findByPdsItemId" resultType="com.shop.domain.pds.Pds" parameterType="Long">
+		SELECT
+			pds_item_id, 
+			pds_item_name,
+			description,
+			view_cnt,
+			created_date
+		FROM
+			pds
+		WHERE 
+			pds_item_id = #{pdsItemId}
+	</select>
+	
+	<select id="findAllFileByPdsItemId" resultType="com.shop.domain.pds.PdsFile" parameterType="Long">
+		SELECT
+			pds_file_id, 
+			pds_item_id,
+			file_name,
+			file_url,
+			down_cnt,
+			created_date,
+			modified_date
+		FROM
+			pds_file
+		WHERE 
+			pds_item_id = #{pdsItemId}
+	</select>
+	
+	<select id="findByPdsFileId" resultType="com.shop.domain.pds.PdsFile" parameterType="Long">
+		SELECT
+			pds_file_id, 
+			pds_item_id,
+			file_name,
+			file_url,
+			down_cnt,
+			created_date,
+			modified_date
+		FROM
+			pds_file
+		WHERE 
+			pds_file_id = #{pdsFileId}
+	</select>
+	
+	<select id="findAll" resultType="com.shop.domain.pds.PdsFile">
+		SELECT
+			pds_file_id, 
+			pds_item_id,
+			file_name,
+			file_url,
+			down_cnt,
+			created_date,
+			modified_date
+		FROM
+			pds_file
+		WHERE
+			pds_file_id > 0
+		ORDER BY
+			pds_file_id DESC,
+			created_date DESC
+	</select>
+	
+	<update id="updatePds" parameterType="com.shop.domain.pds.Pds">
+		UPDATE 
+			pds
+		SET
+			pds_item_name = #{pdsItemName},
+			description = #{description},
+			modified_date = now()
+		WHERE
+			pds_item_id = #{pdsItemId}
+	</update>
+	
+	<delete id="deleteAllByPdsItemId" parameterType="Long">
+		DELETE FROM
+			pds_file
+		WHERE
+			pds_item_id = #{pdsItemId}
+	</delete>
+	
+</mapper>

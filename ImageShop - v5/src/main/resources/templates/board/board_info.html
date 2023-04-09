@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymleaf.org">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+
+	<link rel="stylesheet" th:href="@{./../assets/css/style.css}" />
+	<link rel="stylesheet" th:href="@{./../assets/css/bootstrap.min.css}" />
+	
+	<script th:src="@{./../assets/js/jquery.min.js}"></script>
+	<script th:src="@{./../assets/js/app/board.js}"></script>
+	<script th:src="@{./../assets/js/base64.min.js}"></script>
+	
+</head>
+<body>
+
+	<a href="/home">home</a>
+	
+	<br/><br/>
+
+	<h3>Board</h3>
+	
+	<form id="board_form"> 
+		<table class="table-striped">
+			<tr>
+				<td><label for="boardNo">boardNo</label></td>
+				<td><input type="text" id="boardNo" value=""></td>
+			</tr>
+			<tr>
+				<td><label for="boardTitle">boardTitle</label></td>
+				<td><input type="text" id="boardTitle" value=""></td>
+			</tr>
+			<tr>
+				<td><label for="boardContent">boardContent</label></td>
+				<td><textarea id="boardContent" rows="3" cols="22"></textarea></td>
+			</tr>
+			<tr>
+				<td><label for="boardWriter">boardWriter</label></td>
+				<td><input type="text" id="boardWriter" value=""></td>
+			</tr>
+		</table>
+	</form>
+	
+	<div>
+		<button id="boardListBtn">LIST</button>
+		<button id="boardReadBtn">READ</button>
+		<button id="boardRegisterBtn">REGISTER</button>
+		<button id="boardDeleteBtn">DELETE</button>
+		<button id="boardModifyBtn">MODIFY</button>
+		<button id="boardResetBtn">RESET</button>
+	</div>
+	
+	<br/>
+	
+	<div id="content">
+		
+	</div>
+
+</body>
+</html>

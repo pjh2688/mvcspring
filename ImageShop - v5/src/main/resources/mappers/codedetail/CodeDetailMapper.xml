@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "mybatis-3-mapper.dtd" "mybatis-3-mapper.dtd">
+
+<mapper namespace="com.shop.mapper.codedetail.ICodeDetailMapper">
+
+	<select id="getCodeLabelValueList" resultType="com.shop.domain.codelabel.CodeLabelValue">
+		SELECT
+			group_code as value,
+			group_name as label
+		FROM
+			code_group
+		WHERE
+			use_yn = 'Y'
+		ORDER BY
+			group_name
+	</select>
+	
+	<insert id="save">
+		INSERT INTO code_detail(
+			group_code,
+			code_value,
+			code_name,
+			sort_seq,
+			use_yn,
+			created_date
+		)
+		VALUES(
+			#{groupCode},
+			#{codeValue},
+			#{codeName},
+			#{sortSeq},
+			'Y',
+			now()
+		)
+	</insert>
+	
+	<select id="findByGroupCodeAndCodeValue" resultType="com.shop.domain.codedetail.CodeDetail" parameterType="com.shop.domain.codedetail.CodeDetail">
+		SELECT 
+			group_code,
+			code_value,
+			code_name,
+			sort_seq,
+			use_yn,
+			created_date,
+			modified_date
+		FROM
+			code_detail
+		WHERE 
+			group_code = #{groupCode}
+		AND
+			code_value = #{codeValue}
+	</select>
+	
+	<!-- 참고 : NVL -> 첫번째 인자가 NULL혹은 0이면 두번째 인자를 출력(이거 질문) -->
+	<select id="getMaxSortSeq" parameterType="String" resultType="int">
+		SELECT 
+			NVL(MAX(sort_seq), 0)  
+		FROM
+			code_detail
+		WHERE
+			group_code = #{groupCode}
+	</select>
+	
+	<select id="list" resultType="com.shop.domain.codedetail.CodeDetail">
+		SELECT 
+			group_code,
+			code_value,
+			code_name,
+			sort_seq,
+			use_yn,
+			created_date,
+			modified_date
+		FROM
+			code_detail
+		ORDER BY 
+			created_date DESC, modified_date DESC, sort_seq ASC 
+	</select>
+	
+	<delete id="delete" parameterType="com.shop.domain.codedetail.CodeDetail">
+		DELETE FROM
+			code_detail
+		WHERE 
+			group_code = #{groupCode}
+		AND
+			code_value = #{codeValue}
+	</delete>
+	
+	<update id="update" parameterType="com.shop.domain.codedetail.CodeDetail">
+		UPDATE 
+			code_detail
+		SET
+			code_name = #{codeName},
+			modified_date = now()
+		WHERE 
+			group_code = #{groupCode}
+		AND
+			code_value = #{codeValue}
+	</update>
+	
+</mapper>

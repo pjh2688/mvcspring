@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymleaf.org">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+
+	<link rel="stylesheet" th:href="@{./../assets/css/style.css}" />
+	<link rel="stylesheet" th:href="@{./../assets/css/bootstrap.min.css}" />
+	
+	<script th:src="@{./../assets/js/jquery.min.js}"></script>
+	<script th:src="@{./../assets/js/app/pds.js}"></script>
+	<script th:src="@{./../assets/js/base64.min.js}"></script>
+	
+</head>
+<body>
+
+	<a href="/home">home</a>
+	
+	<br/><br/>
+
+	<h3>Pds</h3>
+	
+	<form id="pds_form"> 
+		<table class="table-striped">
+			<tr>
+				<td><label for="pdsItemId">pdsItemId</label></td>
+				<td><input type="text" id="pdsItemId" value=""></td>
+			</tr>
+			<tr>
+				<td><label for="pdsItemName">pdsItemName</label></td>
+				<td><input type="text" id="pdsItemName" value=""></td>
+			</tr>
+			<tr>
+				<td><label for="pdsItemDescription">description</label></td>
+				<td><textarea id="pdsItemDescription" rows="3" cols="22"></textarea></td>
+			</tr>
+			<tr>
+				<td><label for="pdsInputFile">file</label></td>
+				<td>
+					<div id="file_list"></div>
+					<input type="file" id="pdsInputFile" name="pds" multiple="multiple"/>
+	
+				</td>
+			</tr>
+		</table>
+	</form>
+	
+	<div>
+		<button id="pdsItemListBtn">LIST</button>
+		<button id="pdsItemReadBtn">READ</button>
+		<button id="pdsItemRegisterBtn">REGISTER</button>
+		<button id="pdsItemDeleteBtn">DELETE</button>
+		<button id="pdsItemModifyBtn">MODIFY</button>
+		<button id="pdsItemResetBtn">RESET</button>
+	</div>
+	
+	<br/>
+	
+	<div id="content">
+		
+	</div>
+
+</body>
+</html>
